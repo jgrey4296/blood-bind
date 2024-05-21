@@ -8,33 +8,31 @@
 
 (defconst blood-bind-version "0.1.0")
 
-(defun bloodbind-apply (profile)
+(defun bloodbind-apply (profile &optional merge)
   " apply compiled keymaps to non-bloodbind variables"
   (interactive)
   ;; retrieve keymaps from registry
   ;; set their respective variables
   )
 
-(defun bloodbind-compile ()
-  " generate the bindings that will match an emacs state pattern "
-  (interactive)
-  ;; expand all registered bind patterns
-  ;; transform bind patterns
-  ;; assemble into submaps
-  ;; transform submaps
-  ;; assemble submaps into full maps
-  ;; assemble maps into profiles
+(defun bloodbind-compile (&rest profiles)
+  " Run the compilation of specified profiles
+profile -> list[entry] -> list[mapname]
+create {name -> profile-local-name} mapping, and create profile maps
+for entry in entries: bind target to correct profile map
 
+inserting compiled-profile structs into the store ready to apply
+
+"
+  (interactive)
   )
 
-
-
-(defun bloodbind-summary (&rest args)
+(defun bloodbind-summary (&optional profile map state pattern)
   " summarise bindings according to a pattern "
   (interactive)
   )
 
-(defun bloodbind-wipe ()
+(defun bloodbind-wipe (&optional profile map state)
   " wipe all bindings in all keymaps "
   (interactive)
 

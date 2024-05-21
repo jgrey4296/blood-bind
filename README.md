@@ -20,10 +20,18 @@ A Declarative, re-triggerable Key Binding Overlord for emacs
 
 ## The DSL
 
+``` emacs-lisp
+(bloodbind! 
+
+
+)
+```
+
+
 ## Usage 
 ### Setup
 1) declare bindings/profiles into `bloodbind--registry` using `bloodbind!`
-2) declare pre-compilation token transforms with `bloodbind-token-transform!`
+2) declare any pre-compilation token transforms with `bloodbind-token-transform!`
 3) declare compilation transforms with `bloodbind-entries-transform!`
 4) declare post-compilation keymap transforms `bloodbind-map-transform!`
 5) user registers interferences with `bloodbind-register-interference`
@@ -41,6 +49,8 @@ A Declarative, re-triggerable Key Binding Overlord for emacs
 ## Emacs keybinding notes
 
 ### Current Builtin
+- key-valid-p
+- make-keymap
 - keymap-set
 - keymap-global-set
 - keymap-local-set

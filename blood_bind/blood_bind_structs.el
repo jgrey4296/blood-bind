@@ -7,20 +7,56 @@
 ;;-- end Header
 
 (cl-defstruct bloodbind--store
-  " The main store of all bindings to create keymaps from. "
-  )
-
-(cl-defstruct bloodbind--entry
-  " a single binding entry. a pattern, its result, and metadata "
-  )
-
-(cl-defstruct bloodbind--pattern
-  " a binding pattern that will be compiled into a keymap "
+  " The main store of all profiles, pre- and post- compilation "
+  (profiles (make-hash-table)  :type 'hash-table)
+  (compiled (make-hash-table)  :type 'hash-table)
   )
 
 (cl-defstruct bloodbind--profile
-  " a pattern defined collection of keymaps to apply "
+  " a named collection of entries.
+at compile: all(entries) -> (list major-list minor-list state-list )
+then foreach sym: 'sym-profile-name-map
+(eg: 'python -> python-profile-default-map)
+on profile (apply default): (setq python-mode-map python-profile-default-map)
+
+"
+  (name nil    :type 'symbol)
+  (globals nil :type 'list) ;; all global profile bindings
+  (entries nil :type 'list) ;; list[ ([local-bindings], [entries]) ]
   )
+
+(cl-defstruct bloodbind--compiled-profile
+  " The compiled profile, with local maps
+when applied, loops (setq maps.key maps.value)
+"
+  (name nil :type 'symbol)
+  (maps (make-hash-table) :type 'hash-table)
+  )
+
+(cl-defstruct bloodbind--entry
+  " a single binding entry. a pattern, its target, and metadata.
+can be:
+([pattern] #'cmd (meta)) : standard binding
+([pattern]  :kw (:bind 'global)) : global binding
+([pattern]  :kw (:bind 'local))  : local binding
+
+ "
+  (pattern nil    :type 'bloodbind--pattern)
+  (target nil     :type 'symbol-or-kw)
+  (meta nil       :type 'plist)
+  (file nil       :type 'str)
+  (expanded nil   :type 'bool)
+  )
+
+(cl-defstruct bloodbind--pattern
+  " a binding pattern that will be compiled into a keymap
+eg: ('python-mode-map 'normal
+"
+  (map nil   :type 'list)
+  (state nil :type 'symbol)
+  (keys nil  :type 'list)
+  )
+
 
 (provide 'blood_bind_structs)
 

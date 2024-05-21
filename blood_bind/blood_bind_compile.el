@@ -6,34 +6,26 @@
 ;; See footer for licenses/metadata/notes as applicable
 ;;-- end Header
 
-(defun bloodbind--expand-token (token)
-  " try the expansion rules on a token "
 
+(defun bloodbind--compile-profile (profile)
+  ;; get profile
+  ;; get global bindings
+  ;; extract map-vars
+  ;; build empty compiled-profile of maps
+  ;; for (locals, entries) in profile:
+  ;; ;; for entry in entries:
+  ;; ;; ;; expand-entry(entry, using=locals, onto=comp-profile.lookup[entry.map])
+
+  ;; return compiled profile
   )
 
-(defun bloodbind--expand-pattern (pattern)
-  " expand the tokens of a pattern "
+(defun bloodbind--expand-entry (entry locals globals maps)
+  ;; get maps[entry.pattern.map|state] -> profilemap
+  ;; entry.pattern.keys -> keymap vector
+  ;; bind pmap[keyvec] = maps[entry.target] | entry.target
   )
 
-(defun bloodbind--transform-patterns ()
-  " patterns -> patterns "
-  )
 
-(defun bloodbind--transform-maps ()
-  " maps -> maps "
-  )
-
-(defun bloodbind--assemble-submaps ()
-  " patterns -> submaps "
-  )
-
-(defun bloodbind--assemble-maps ()
-  " submaps -> maps "
-  )
-
-(defun bloodbind--assemble-profiles ()
-  " maps -> profiles "
-  )
 
 (provide 'blood_bind_compile)
 

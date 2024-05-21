@@ -7,21 +7,43 @@
 ;;-- end Header
 
 ;; basic ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(bloodbind!
- "a docstring"
+(bloodbind! "docstring of basic examples"
  ;; General form: [pattern] :: #'cmd (:metadata)*
  ;; global, stateless bindings:
  [a] :: #'cmd
  ;; auto wrap lambdas with (interactive)
- [b] :: #'(lambda (x) (message "blah"))
+ [b] :: #'(lambda () (message "blah"))
 
  ;; auto mode toggles
  [ t q ] :: (:toggle global-flycheck-mode)
  ;; call function on compile for bind cmd/target
  [ t e] :: (:on-compile (transient-make-call! evil-embrace "E"))
+ ;; major mode map binding:
+ [ :python! a b] :: #'cmd
+ ;; minor mode map binding:
+ [ :yas& a b] :: #'cmd
+ ;; state map binding
+ [ :normal? a b ] :: #'cmd
+ ;; Combined:
+ [ :python! :insert? a b] :: #'cmd
+ ;; Always: mode -> state -> binding
  )
 
+(bloodbind! "docstring for map closure"
+ ;; set the map(s) for everything that comes after
+ (start :python!) ;; or: (:python! :python-ts!)
+ ;; This is bound to [python-mode-map a b]
+ [ a b ] :: #'cmd
+ )
+
+(bloodbind! 'profile
+            "docstring of a profile"
+            [a b] :: #'cmd
+            )
+
+
 ;; pattern wildcards ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; LATER
 (bloodbind!
  ;; mode wildcards
  [ :*! a b] :: #'cmd
@@ -33,7 +55,7 @@
  ;; ranges
  [ a b ,<a-z> ] :: #'cmd ;; apply to those in the range
  ;; state wildcards
- [ :python: (:state ,*) ] :: #'escape
+ [ :python! (:state ,*) ] :: #'escape
 
  )
 
@@ -57,7 +79,9 @@
  [ :yas& a b ] :: #'cmd
  ;; literal map, compilation will create a map, then apply it to the variable later
  [ (:map quickrun--mode-map)  q ] :: #'cmd
+ )
 
+(bloodbind! 'later ""
   ;; collection of matching bindings into hat variables as a global submap
  [ a b ,* ] => :^shallowgroup
  ;; all subbinds into submap
@@ -81,37 +105,45 @@
 (bloodbind!
  [ :python! (:state normal) x ] :: #'cmd
  ;;or
- [ :python! :normal% x ] :: #'cmd
+ [ :python! :normal? x ] :: #'cmd
  ;; with vars
  [ (:state normal) ] -> :n
  [ :python! :n x ] :: #'cmd
 
- ;; declares new state if necessary
+ ;; LATER declare new state if necessary
  [ :python! (:state blah ) x ] :: #'cmd
  [ :python!:n y ] :: #'evil-blah-state
 
  )
 
 ;; conflicts and overrides ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(bloodbind!
+(bloodbind! 'later ""
  [a] :: #'cmd
  [a] :: #'cmd2 ;; <- error
- [!! a] :: #'cmd2 ;; success?
+ [!! a] :: #'cmd2 ;; override
 
- ;; Disable a pattern entirely
-
+ ;; Disable a pattern
+  [a] :: nil
+ ;; LATER Disallow a pattern, error at compile time
+  [~ a] :: error
+  [a] :: #'cmd ;; will error at compile
+  [(~ :key x) a] :: ignore ;; require the binding have the key
+  [a] :: #'cmd ;; will ignore the binding
+  [(:key x) a] :: #'cmd ;; will store the binding
 )
+
 
 ;; metadata ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (bloodbind!
  ;; just a plist after the cmd
  [ a b c ] :: #'cmd (:desc "blah" :ref val)
- ;; conditionals, checked at keymap compile time
- [ a b d ] :: #'cmd (:if #'(lambda () ) )
+ ;; LATER conditionals, checked at keymap compile time
+ [ a b d ] :: #'cmd (:when  #'(lambda () ) )
+ [ a b d ] :: #'cmd (:unless #'(lambda () ) )
 )
 
 ;; generation ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(bloodbind!
+(bloodbind! 'later
  ;; apply a submap var
  [:emacs-lisp: q] :: :^group
 

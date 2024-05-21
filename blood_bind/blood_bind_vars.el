@@ -6,7 +6,7 @@
 ;; See footer for licenses/metadata/notes as applicable
 ;;-- end Header
 
-(defvar bloodbind--registry nil "where all bindings are stored")
+(defvar bloodbind--registry nil "where all bindings are stored, of type `bloodbind--store'")
 (defvar bloodbind--generated nil "where bindings are assembled into a keymaps")
 (defvar bloodbind--generation-hook nil "transforms to run on the keymap being assembled")
 (defvar bloodbind--profiles nil "patterns that create a collection of binding keymaps")
