@@ -1,0 +1,46 @@
+#+TITLE: Blood Bind Todos
+#+STARTUP: agenda
+
+* ACTIVE [#B] Blood Bind
+** [∅] bloodbind! -> structs
+macro -> pattern -> entry -> profile -> store
+
+** [∅] pattern expansion
+** application
+** local vars
+** global vars
+** hook installation
+** reporting
+** Testing
+*** start state instruction
+*** map creation
+*** local map creation
+*** map prefixs
+*** map states
+*** lambda wrapping
+*** metadata pairing
+*** toggle
+*** rebinding
+
+
+* Features
+** key-cleaning
+** conflict detection
+** retrigger
+** compilation
+** parsing
+** summarisation
+** leader keys
+** evil states
+** profiles
+** debugging
+** modifer key removal
+** pretty-formatting of keymaps
+** transforms
+** keymap wipe
+** disable interference
+* Utils
+* Macros
+* Structs
+* Testing
+* Links
