@@ -1,6 +1,9 @@
 # Blood Bind 
 A Declarative, re-triggerable Key Binding Overlord for emacs
 
+## Why? 
+General is... big.
+
 ## Features
 - conflict detection
 - re-triggerable for when modes interfere with my bindings

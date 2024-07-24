@@ -8,7 +8,7 @@
 
 
 
-(provide 'blood_bind_utils)
+(provide 'blood-bind-utils)
 
 ;;-- Footer
 ;; Copyright (C) 2024 john

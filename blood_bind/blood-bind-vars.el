@@ -6,12 +6,12 @@
 ;; See footer for licenses/metadata/notes as applicable
 ;;-- end Header
 
-(defvar bloodbind--registry nil "where all bindings are stored, of type `bloodbind--store'")
-(defvar bloodbind--generated nil "where bindings are assembled into a keymaps")
-(defvar bloodbind--generation-hook nil "transforms to run on the keymap being assembled")
-(defvar bloodbind--profiles nil "patterns that create a collection of binding keymaps")
+(defvar blood-bind--registry nil "where all bindings are stored, of type `blood-bind--store'")
+(defvar blood-bind--generated nil "where bindings are assembled into a keymaps")
+(defvar blood-bind--generation-hook nil "transforms to run on the keymap being assembled")
+(defvar blood-bind--profiles nil "patterns that create a collection of binding keymaps")
 
-(provide 'blood_bind_vars)
+(provide 'blood-bind-vars)
 
 ;;-- Footer
 ;; Copyright (C) 2024 john

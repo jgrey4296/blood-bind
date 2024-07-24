@@ -157,7 +157,7 @@
 
 ;; debugging ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(provide 'blood_bind_dsl)
+(provide 'blood-bind-dsl)
 
 ;;-- Footer
 ;; Copyright (C) 2024 john

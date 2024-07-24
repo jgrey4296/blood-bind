@@ -6,8 +6,7 @@
 ;; See footer for licenses/metadata/notes as applicable
 ;;-- end Header
 
-
-(defun bloodbind--compile-profile (profile)
+(defun blood-bind--compile-profile (profile)
   ;; get profile
   ;; get global bindings
   ;; extract map-vars
@@ -19,15 +18,13 @@
   ;; return compiled profile
   )
 
-(defun bloodbind--expand-entry (entry locals globals maps)
+(defun blood-bind--expand-entry (entry locals globals maps)
   ;; get maps[entry.pattern.map|state] -> profilemap
   ;; entry.pattern.keys -> keymap vector
   ;; bind pmap[keyvec] = maps[entry.target] | entry.target
   )
 
-
-
-(provide 'blood_bind_compile)
+(provide 'blood-bind-compile)
 
 ;;-- Footer
 ;; Copyright (C) 2024 john

@@ -8,14 +8,14 @@
 
 (defconst blood-bind-version "0.1.0")
 
-(defun bloodbind-apply (profile &optional merge)
-  " apply compiled keymaps to non-bloodbind variables"
+(defun blood-bind-apply (profile &optional merge)
+  " apply compiled keymaps to non-blood-bind variables"
   (interactive)
   ;; retrieve keymaps from registry
   ;; set their respective variables
   )
 
-(defun bloodbind-compile (&rest profiles)
+(defun blood-bind-compile (&rest profiles)
   " Run the compilation of specified profiles
 profile -> list[entry] -> list[mapname]
 create {name -> profile-local-name} mapping, and create profile maps
@@ -27,29 +27,29 @@ inserting compiled-profile structs into the store ready to apply
   (interactive)
   )
 
-(defun bloodbind-summary (&optional profile map state pattern)
+(defun blood-bind-summary (&optional profile map state pattern)
   " summarise bindings according to a pattern "
   (interactive)
   )
 
-(defun bloodbind-wipe (&optional profile map state)
+(defun blood-bind-wipe (&optional profile map state)
   " wipe all bindings in all keymaps "
   (interactive)
 
   )
 
-(defun bloodbind-disable-interference ()
-  " disable non-bloodbind means of binding keys "
+(defun blood-bind-disable-interference ()
+  " disable non-blood-bind means of binding keys "
   (interactive)
 
   )
 
-(defun bloodbind-register-interference (&rest args)
+(defun blood-bind-register-interference (&rest args)
   " register a means that other modes interfere with keybindings "
 
   )
 
-(provide 'blood_bind)
+(provide 'blood-bind)
 
 ;;-- Footer
 ;; Copyright (C) 2024 john

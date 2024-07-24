@@ -1,4 +1,4 @@
-;;; blood_bind_reporter.el -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; blood_bind_hooks.el -*- lexical-binding: t; no-byte-compile: t; -*-
 ;;-- Header
 ;; File Commentary:
 ;;
@@ -6,13 +6,15 @@
 ;; See footer for licenses/metadata/notes as applicable
 ;;-- end Header
 
-(defun bloodbind-report-conflict (&rest conflicts)
-  " report on conflicting patterns for debugging "
 
- )
+(defun blood-bind-update-keymaps-h ()
+  " for change -major-mode-hook.
+based on the major-mode, set keymap variables?  "
+
+  )
 
 
-(provide 'blood_bind_reporter)
+(provide 'blood-bind-hooks)
 
 ;;-- Footer
 ;; Copyright (C) 2024 john
@@ -30,4 +32,4 @@
 ;; This file is not part of GNU Emacs.
 ;;
 ;;-- end Footer
-;;; blood_bind_reporter.el ends here
+;;; blood_bind_hooks.el ends here
