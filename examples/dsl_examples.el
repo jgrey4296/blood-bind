@@ -1,4 +1,4 @@
-;;; blood_bind_dsl.el -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; dsl_examples.el -*- lexical-binding: t; no-byte-compile: t; -*-
 ;;-- Header
 ;; File Commentary:
 ;;
@@ -157,15 +157,16 @@
 
 ;; debugging ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(provide 'blood-bind-dsl)
+
+
 
 ;;-- Footer
 ;; Copyright (C) 2024 john
 ;;
 ;; Author:     john <https://github.com/jgrey4296>
 ;; Maintainer: john <john@john-UM700>
-;; Created:    April 03, 2024
-;; Modified:   April 03, 2024
+;; Created:    July 24, 2024
+;; Modified:   July 24, 2024
 ;; Version: 0.0.1
 ;; Keywords:
 ;; Homepage: https://github.com/jgrey4296
@@ -175,4 +176,4 @@
 ;; This file is not part of GNU Emacs.
 ;;
 ;;-- end Footer
-;;; blood_bind_dsl.el ends here
+;;; dsl_examples.el ends here
