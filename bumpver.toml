@@ -11,5 +11,5 @@ tag                = true
 # push             = true
 
 [bumpver.file_patterns]
-"bumpver.toml"        = ['^current_version\s+=\s+"{version}"']
+"bumpver.toml"             = ['^current_version\s+=\s+"{version}"']
 "blood_bind/blood-bind.el" = ['defconst blood-bind-version "{version}"']

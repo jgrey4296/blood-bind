@@ -24,7 +24,7 @@
   ;; bind pmap[keyvec] = maps[entry.target] | entry.target
   )
 
-(provide 'blood-bind-compile)
+(provide 'blood-bind--compile)
 
 ;;-- Footer
 ;; Copyright (C) 2024 john

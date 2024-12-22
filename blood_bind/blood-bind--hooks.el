@@ -14,7 +14,7 @@ based on the major-mode, set keymap variables?  "
   )
 
 
-(provide 'blood-bind-hooks)
+(provide 'blood-bind--hooks)
 
 ;;-- Footer
 ;; Copyright (C) 2024 john

@@ -60,7 +60,7 @@ eg:
 "
   )
 
-(provide 'blood-bind-macros)
+(provide 'blood-bind--macros)
 
 ;;-- Footer
 ;; Copyright (C) 2024 john

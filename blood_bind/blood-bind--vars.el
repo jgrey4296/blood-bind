@@ -1,4 +1,4 @@
-;;; blood_bind_reporter.el -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; blood_bind_vars.el -*- lexical-binding: t; no-byte-compile: t; -*-
 ;;-- Header
 ;; File Commentary:
 ;;
@@ -6,13 +6,12 @@
 ;; See footer for licenses/metadata/notes as applicable
 ;;-- end Header
 
-(defun blood-bind-report-conflict (&rest conflicts)
-  " report on conflicting patterns for debugging "
+(defvar blood-bind--registry nil "where all bindings are stored, of type `blood-bind--store'")
+(defvar blood-bind--generated nil "where bindings are assembled into a keymaps")
+(defvar blood-bind--generation-hook nil "transforms to run on the keymap being assembled")
+(defvar blood-bind--profiles nil "patterns that create a collection of binding keymaps")
 
- )
-
-
-(provide 'blood-bind-reporter)
+(provide 'blood-bind--vars)
 
 ;;-- Footer
 ;; Copyright (C) 2024 john
@@ -30,4 +29,4 @@
 ;; This file is not part of GNU Emacs.
 ;;
 ;;-- end Footer
-;;; blood_bind_reporter.el ends here
+;;; blood_bind_vars.el ends here

@@ -57,7 +57,7 @@ eg: ('python-mode-map 'normal
   (keys nil  :type 'list)
   )
 
-(provide 'blood-bind-structs)
+(provide 'blood-bind--structs)
 
 ;;-- Footer
 ;; Copyright (C) 2024 john
