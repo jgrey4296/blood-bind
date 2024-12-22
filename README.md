@@ -1,5 +1,5 @@
 # Blood Bind 
-A Declarative, re-triggerable Key Binding Overlord for emacs
+Key Binding Overlord for emacs
 
 ## Why? 
 General is... big.
@@ -59,6 +59,10 @@ General is... big.
 - keymap-local-set
 - set-keymap-parent
 - keymap-canonicalize
+- keymap-parent
+- set-keymap-parent
+- make-composed-keymap
+- keymap-lookup
 
 ### Current External
 - bind-keys*
