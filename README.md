@@ -33,7 +33,7 @@ General is... big.
 
 ## Usage 
 ### Setup
-1) declare bindings/profiles into `bloodbind--registry` using `bloodbind!`
+j) declare bindings/profiles into `bloodbind--registry` using `bloodbind!`
 2) declare any pre-compilation token transforms with `bloodbind-token-transform!`
 3) declare compilation transforms with `bloodbind-entries-transform!`
 4) declare post-compilation keymap transforms `bloodbind-map-transform!`
