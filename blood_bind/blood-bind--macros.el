@@ -6,58 +6,121 @@
 ;; See footer for licenses/metadata/notes as applicable
 ;;-- end Header
 
-;; TODO first arg as docstring
-;; TODO record expansion file into generated data
+(eval-when-compile
+  (require 'cl-lib)
+  (require 'jg-misc-macros)
+  (require 'blood-bind--structs)
+  (require 'blood-bind--compile)
+  )
 
-(defmacro bloodbind! (&rest args)
-  " adds entries into the a profile in the registry
-    using the bloodbind DSL.
+(cl-defmacro bloodbind! (name (&optional type)
+                              &optional docstr
+                              &rest body
+                              &key override
+                              &allow-other-keys
+                              )
+  "Adds entries into the a profile in the registry
+using the bloodbind DSL.
 Doesn't check for conflicts, or do expansions.
 
 DSL:
-[a b c] -> :kw                         ;; = bind pattern to kw
-let [a b c] -> :kw                     ;; = local bind pattern
-[a b c] :: #'cmd                       ;; = pattern entry
-[a \"b\" c] :: #'cmd                   ;; = pattern enty
-[a b c] :: #'cmd (:kw val :kw val)     ;; = metadata plist
-[a b c] :: #'(lambda () (...))         ;; = autowrap in interactive
-[a b c] :: (:toggle 'mode)             ;; = toggle minor modes on/off
-[ #'x #'y ] :: #'cmd                   ;; = any pattern that targets x or y uses cmd instead
-[:kw ] ...                             ;; = expand kw to pattern ([a b c])
-[:kw!]                                 ;; = 'kw-mode-map
-[:kw&]                                 ;; = 'kw-minor-mode-map
-[:kw?]                                 ;; = kw-state
-[ (:map python-mode-map) ]             ;; = explicit map. equiv to :python!
-[ (:state name) ]                      ;; = explicit state. equiv to :name?
-[    ]                                 ;; =
+{pattern} {op} {target} {meta}?
+:let ({$var} = {val} ... )
 
-(start :kw!)                           ;; = all follow implicitly have :kw!/:kw&/:kw?
-(start :kw! :kw& :kw?)                 ;; = composite
-(start (:map python-mode-map))         ;; = explicit map naming
+Pattern:
+[ {meta} :|: {key seq} ]
+
+Pattern Key Seqs:
+[ a b c ]                ;; vector of keys
+[ ... $var    ... ]      ;; let variable expansion
+[ ... :state? ... ]      ;; evil state
+[ _  ... ]               ;; implicit variable state
+
+Pattern Meta:
+[ _ ]                    ;; implicit variable state
+[ #'x ]                  ;; Remap cmd
+[ :majname! ... ]        ;; mode map
+[ :minname& ... ]        ;; mode map
+[ (:kw val) ... ]        ;; Explicit/extendable meta
+[ !!        ... ]        ;; Override
+[ :local    ... ]        ;; local map pattern
+
+Operator:
+::                ;; keys to cmd
+->                ;; var bind
+=>                ;; pattern to submap | parent to submap
+
+Target:
+#'cmd             ;; commands
+#'(lambda () )    ;; lambdas
+:^map             ;; submaps
+
+Meta:
+( :kwd val ... )             ;; plists (extendable)
+( :toggle val | mode )       ;;
+( :hook hook fn )            ;;
+( :on-compile val )          ;;
+( :desc str )                ;;
+( :allow-override bool )     ;;
+
+Variables:
+$var         ;;
+$_           ;; implicit pattern leader?
+
+Values:
+:^submap     ;;
+[ pattern ]  ;;
 
  "
-  )
+  (declare (indent defun))
+  (let* ((source (macroexp-file-name))
+         (docstring (pcase docstr ;; if docstring, use it
+                      ((pred stringp) docstr)
+                      (x ;; else its part of the body
+                       (push x body)
+                       nil
+                       )))
+         (namesym (gensym! 'bloodbind name)) ;; gen name to register under
+         (bodysym (gensym "body"))
+         (clean-body (pop-plist-from-body! body))
+         check   ;; unless-check
+         )
+    ;; assert type = bind | profile
+    `(make-blood-bind-profile ,namesym ,docstring ,source ,clean-body)
+      )
+    )
 
-(defmacro blood-bind-pattern-transform! (pattern &rest result)
-  " declare a transform that matches on `pattern`,
-and calls the code to transform the resulting bindings on compilation "
-
-  )
-
-(defmacro blood-bind-entry-transform! (entry-p &rest result)
-  "declare a transform for an entry-p lambda into result"
-  )
-
-(defmacro blood-bind-token-transform! (&rest args) ;; (λ [pattern] -> [pattern] )
-  " LATER define how to expand tokens in the pattern dsl
-eg:
-[a]             -> (kbd \"a\")
-[!!]            -> :allow-override
-[ :blah! ]      -> blah-mode-map
-[ :blah? ]      -> evil-blah-state-map
-[ (:state blah) -> evil-blah-state-map
-[ :blah? ]      -> ?
+(cl-defmacro bloodform! (name (&optional type)
+                                   &optional docstr
+                                   &rest body
+                                   &key override
+                                   &allow-other-keys)
+  "Declare compilation time transforms of patterns.
+Types :
+(pattern) = [pattern]  -> [pattern]
+(entry)   = entry-spec -> lambda
+(map)     = maps*      -> ([pattern] -> [pattern])*
+(token)   = [ token ]  -> token | kwd | map
 "
+  (declare (indent defun))
+  (let* ((source (macroexp-file-name))
+         (clean-body (pop-plist-from-body! body))
+         )
+
+    `(unless ,@unlesscheck
+
+       )
+    )
+  )
+
+;; util ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun bbm-build-profile (name &rest body) ;; -> bbs-profile
+
+  )
+
+(defun bbm-build-transform () ;; -> bbs-transform
+
   )
 
 (provide 'blood-bind--macros)
@@ -79,3 +142,10 @@ eg:
 ;;
 ;;-- end Footer
 ;;; blood_bind_macros.el ends here
+;; Local Variables:
+;; read-symbol-shorthands: (
+;; ("bbm-" . "blood-bind--macros-")
+;; ("bbs-" . "blood-bind--structs-")
+;; ("make-bb-" . "make-blood-bind-")
+;; )
+;; End:

@@ -27,3 +27,8 @@
 ;;
 ;;-- end Footer
 ;;; blood_bind_utils.el ends here
+;; Local Variables:
+;; read-symbol-shorthands: (
+;; ("bbu-" . "blood-bind--util-")
+;; )
+;; End:

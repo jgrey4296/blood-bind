@@ -1,12 +1,23 @@
 ;;; blood_bind.el -*- lexical-binding: t; no-byte-compile: t; -*-
 ;;-- Header
 ;; File Commentary:
+;; The public access api to blood-bind
 ;;
 ;;
-;; See footer for licenses/metadata/notes as applicable
 ;;-- end Header
+(eval-when-compile
+  (require 'cl-lib)
+  )
 
 (defconst blood-bind-version "0.1.0")
+
+(require 'blood-bind--util)
+(require 'blood-bind--structs)
+(require 'blood-bind--macros)
+(require 'blood-bind--hooks)
+
+(require 'blood-bind--compile)
+(require 'blood-bind--reporter)
 
 (defun blood-bind-apply (profile &optional merge)
   " apply compiled keymaps to non-blood-bind variables"
@@ -27,13 +38,13 @@ inserting compiled-profile structs into the store ready to apply
   (interactive)
   )
 
-(defun blood-bind-summary (&optional profile map state pattern)
+(cl-defun blood-bind-summary (&key profile map state pattern)
   " summarise bindings according to a pattern "
   (interactive)
   )
 
-(defun blood-bind-wipe (&optional profile map state)
-  " wipe all bindings in all keymaps "
+(cl-defun blood-bind-wipe (&key pattern map profile transform)
+  "wipe all registered patterns/maps/profiles/transforms"
   (interactive)
 
   )
@@ -48,6 +59,9 @@ inserting compiled-profile structs into the store ready to apply
   " register a means that other modes interfere with keybindings "
 
   )
+
+;; autoloads  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 (provide 'blood-bind)
 

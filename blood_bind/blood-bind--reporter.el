@@ -6,11 +6,33 @@
 ;; See footer for licenses/metadata/notes as applicable
 ;;-- end Header
 
-(defun blood-bind-report-conflict (&rest conflicts)
+(defun bbr-conflict (&rest conflicts)
   " report on conflicting patterns for debugging "
 
  )
 
+(defun bbr-overview-profiles ()
+  "Report on all registered profiles"
+
+  )
+
+(defun bbr-overview-entries ()
+  "report on all entries"
+
+  )
+
+(defun bbr-overview-transforms ()
+  "report on all registered transforms"
+
+  )
+
+(defun bbr-overview-maps ()
+  "report on all maps bb has control over"
+  )
+
+(defun bbr-dsl ()
+  "Generate a description of the DSL"
+  )
 
 (provide 'blood-bind--reporter)
 
@@ -31,3 +53,8 @@
 ;;
 ;;-- end Footer
 ;;; blood_bind_reporter.el ends here
+;; Local Variables:
+;; read-symbol-shorthands: (
+;; ("bbr-" . "blood-bind--reporter-")
+;; )
+;; End:

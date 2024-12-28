@@ -6,7 +6,8 @@
 ;; See footer for licenses/metadata/notes as applicable
 ;;-- end Header
 
-(defun blood-bind--compile-profile (profile)
+(defun bbc-profile (profile) ;; bbs-profile -> bbs-profile-compiled
+  "Compiles a named profile with the segments it describes"
   ;; get profile
   ;; get global bindings
   ;; extract map-vars
@@ -18,10 +19,15 @@
   ;; return compiled profile
   )
 
-(defun blood-bind--expand-entry (entry locals globals maps)
+(defun bbc-entry (entry locals globals maps) ;; bbs-entry -> list
+  "Convert an entry into a keymap binding"
   ;; get maps[entry.pattern.map|state] -> profilemap
   ;; entry.pattern.keys -> keymap vector
   ;; bind pmap[keyvec] = maps[entry.target] | entry.target
+  )
+
+(defun bbc-gen-maps () ;; -> hash-table[sym, keymap]
+  "Generate the empty keymaps blood-bind will put bindings into"
   )
 
 (provide 'blood-bind--compile)
@@ -43,3 +49,8 @@
 ;;
 ;;-- end Footer
 ;;; blood_bind_compile.el ends here
+;; Local Variables:
+;; read-symbol-shorthands: (
+;; ("bbc-" . "blood-bind--compile-")
+;; )
+;; End:
