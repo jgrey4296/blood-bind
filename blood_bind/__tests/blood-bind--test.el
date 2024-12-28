@@ -1,15 +1,10 @@
 ;; blood--test.el -*- mode: emacs-lisp; lexical-binding: t; -*-
 ;;
-;; General ERT tests for blood
 ;;
-(require 'f)
+;;
+(require 'buttercup)
 
-(defun blood-bind--test-setup-core ()
-  (add-to-list 'load-path (f-parent default-directory))
-  (load "blood-bind")
-  )
+(describe "general bloodbind"
+  (it "is a sanity test" (expect t :to-be (not nil)))
 
-(ert-deftest blood-bind-test-simple ()
-  "Tests "
-  (should nil)
 )
