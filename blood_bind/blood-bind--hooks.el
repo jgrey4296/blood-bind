@@ -6,7 +6,6 @@
 ;; See footer for licenses/metadata/notes as applicable
 ;;-- end Header
 
-
 (defun blood-bind-update-keymaps-h ()
   " for change -major-mode-hook.
 based on the major-mode, set keymap variables?  "

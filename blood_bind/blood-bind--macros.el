@@ -23,7 +23,6 @@
 using the bloodbind DSL.
 Doesn't check for conflicts, or do expansions.
 
-
 DSL:
 {pattern} {op} {target} {meta}?
 :let ({$var} = {val} ... )
@@ -83,12 +82,11 @@ Values:
          (namesym (gensym! 'bloodbind name)) ;; gen name to register under
          (entrysym (gensym "entries"))
          (clean-body (pop-plist-from-body! body))
-         check   ;; unless-check
+         (unlesscheck `(unless (or ,override (featurep ,blood-bind--vars-delay-symbol))))
          )
-    ;; assert type = bind | profile
-    `(progn ;; unlesscheck
+    `(,@unlesscheck
        (let ((,entrysym (make-blood-bind-entries ,source ,clean-body)))
-         (make-blood-bind-profile ,namesym ,docstring ,entrysym ,clean-body ,args)
+         (make-blood-bind-collection ,namesym ,docstring ,entrysym ,clean-body ,args ,type)
          )
        )
     )
@@ -110,30 +108,20 @@ Values:
                       ;; else its part of the body
                       (x (push x body) nil)))
          (clean-body (pop-plist-from-body! body))
+         (unlesscheck `(unless (or ,override (featurep ,blood-bind--vars-delay-symbol))))
          )
-
-    `(progn ;; ,@unlesscheck
+    `(,@unlesscheck
        (let ((,entrysym (make-blood-bind-transforms ,source ,clean-body)))
-         (make-bood-bind-collection ,name
-                                    ,docstr
-                                    ,source
-                                    ,clean-body
-                                    nil
-                                    'transforms
-                                    )
+         (make-blood-bind-collection ,name
+                                     ,docstr
+                                     ,source
+                                     ,entrysym
+                                     nil
+                                     'transforms
+                                     )
          )
        )
     )
-  )
-
-;; util ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun bbm-build-profile (name &rest body) ;; -> bbs-profile
-
-  )
-
-(defun bbm-build-transform () ;; -> bbs-transform
-
   )
 
 (provide 'blood-bind--macros)

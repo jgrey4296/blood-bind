@@ -3,11 +3,15 @@
 ;; File Commentary:
 ;;
 ;;
-;; See footer for licenses/metadata/notes as applicable
+;;
 ;;-- end Header
 
-(defun bbc-profile (profile) ;; bbs-profile -> bbs-profile-compiled
+(defun bbc-profile (profile) ;; bbs-profile -> bbs-compiled
   "Compiles a named profile with the segments it describes"
+  (cl-assert (symbolp profile))
+  (cl-assert (not (null blood-bind--registry)))
+  (cl-assert (gethash profile (blood-bind--store-profiles blood-bind--registry)))
+
   ;; get profile
   ;; get global bindings
   ;; extract map-vars
@@ -17,17 +21,50 @@
   ;; ;; ;; expand-entry(entry, using=locals, onto=comp-profile.lookup[entry.map])
 
   ;; return compiled profile
+  (error "Not Implemented")
   )
 
-(defun bbc-entry (entry locals globals maps) ;; bbs-entry -> list
-  "Convert an entry into a keymap binding"
+(defun bbc-entry (entry) ;; bbs-entry -> list
+  "Compile an entry into relevant partial maps"
+  (cl-assert (not (null blood-bind--registry)))
   ;; get maps[entry.pattern.map|state] -> profilemap
   ;; entry.pattern.keys -> keymap vector
   ;; bind pmap[keyvec] = maps[entry.target] | entry.target
+
+  (error "Not Implemented")
   )
 
 (defun bbc-gen-maps () ;; -> hash-table[sym, keymap]
-  "Generate the empty keymaps blood-bind will put bindings into"
+  "Generate the empty keymaps blood-bind will put bindings into,
+from registered maps in `blood-bind--registry'
+"
+  (cl-assert (not (null blood-bind--registry)))
+  (error "Not Implemented")
+  )
+
+(defun bbc-make-partial-map (name &optional strict) ;; -> keymap
+  "Add a new partial map to the global registry and return it.
+If the partial map already exists, just return it,
+unless `strict', in which case error
+"
+  (cl-assert (not (null blood-bind--registry)))
+  (when (and strict (gethash name (blood-bind--store-partial-maps blood-bind--registry)))
+    (signal 'blood-bind-error name "already exists"))
+  (unless (gethash name (blood-bind--store-partial-maps blood-bind--registry))
+    (puthash name
+             (make-sparse-keymap)
+             (blood-bind--store-partial-maps blood-bind--registry)))
+
+  (gethash name (blood-bind--store-partial-maps blood-bind--registry))
+  )
+
+(defun bbc-add-entry-to-partial (partial entry)
+  "Add an entry to a given partial map"
+  (cl-assert (or (symbolp partial) (keymapp partial)))
+  (cl-assert (blood-bind--entry-p entry))
+
+
+  (error "Not Implemented")
   )
 
 (provide 'blood-bind--compile)
@@ -52,5 +89,6 @@
 ;; Local Variables:
 ;; read-symbol-shorthands: (
 ;; ("bbc-" . "blood-bind--compile-")
+;; ("bbv-" . "blood-bind--vars-")
 ;; )
 ;; End:

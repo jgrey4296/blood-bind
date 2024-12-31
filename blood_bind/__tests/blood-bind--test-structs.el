@@ -228,7 +228,7 @@ eg: cl-class-p
                                             )))
     )
   (before-each
-    (setq blood-bind-global-store (make--blood-bind-store-internal)))
+    (setq blood-bind--registry (make--blood-bind-store-internal)))
   (it "is a sanity test" (expect t :to-be (not nil)))
   (it "can build an empty collection"
     (expect (make-blood-bind-collection 'test "" "" nil)
@@ -269,31 +269,16 @@ eg: cl-class-p
 )
 
 (describe "profiles"
-  ;; Specs:
   (it "is a sanity test" (expect t :to-be (not nil)))
 
   )
 
 (describe "compiled"
-  ;; Vars:
-  :var (a)
-  ;; Setup
-  (before-each nil)
-  ;; Teardown
-  (after-each nil)
-  ;; Specs:
   (it "is a sanity test" (expect t :to-be (not nil)))
 
 )
 
 (describe "store"
-  ;; Vars:
-  :var (a)
-  ;; Setup
-  (before-each nil)
-  ;; Teardown
-  (after-each nil)
-  ;; Specs:
   (it "is a sanity test" (expect t :to-be (not nil)))
 
 )
