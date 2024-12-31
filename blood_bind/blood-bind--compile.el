@@ -62,9 +62,45 @@ unless `strict', in which case error
   "Add an entry to a given partial map"
   (cl-assert (or (symbolp partial) (keymapp partial)))
   (cl-assert (blood-bind--entry-p entry))
+  (cl-assert (not blood-bind--vars-advice-active))
+  (let ((pmap (pcase partial
+                   ((pred symbolp)
+                    (gethash partial (bbc-make-partial-map partial)))
+                   ((pred keymapp)
+                    partial)
+                   ))
+        (keys (bbc-compile-pattern-to-string (blood-bind--entry-pattern entry)))
+        (target (blood-bind--entry-target entry))
+        )
+    (pcase (keymap-lookup pmap keys nil)
+      ((or 'nil (pred numberp)) nil)
+      ((and x (pred symbolp))
+       (signal 'blood-bind-conflict-error (list partial keys x)))
+      )
+    (keymap-set pmap
+                keys
+                target
+                )
+    partial
+    )
+  )
 
+(defun bbc-compile-pattern-to-string (pattern) ;; -> string
+  (cl-assert (blood-bind--pattern-p pattern))
+  (let* ((keys (blood-bind--pattern-keys pattern))
+         keystr
+         )
+    ;; TODO apply token level transforms here
+    (setq keystr (string-join (mapcar #'symbol-name keys) " "))
+    (cl-assert (key-valid-p keystr))
+    keystr
+    )
+  )
 
-  (error "Not Implemented")
+(defun bbc-combine-partial-maps (&rest maps) ;; -> keymap
+  "Having converted entries to partial maps, combine those partial maps"
+  (cl-assert (cl-every #'keymapp maps))
+  (keymap-canonicalize (make-composed-keymap maps))
   )
 
 (provide 'blood-bind--compile)

@@ -67,6 +67,8 @@
 
 (define-error 'blood-bind-parse-error "Parsing an entry failed" 'blood-bind-error)
 
+(define-error 'blood-bind-conflict-error "Two entries conflicted" 'blood-bind-error)
+
 (provide 'blood-bind--vars)
 
 ;;-- Footer
