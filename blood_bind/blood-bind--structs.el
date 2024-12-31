@@ -57,6 +57,7 @@
 ;; structs ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-error 'blood-bind-error "General Blood Bind Error")
+
 (define-error 'blood-bind-parse-error "Parsing an entry failed" 'blood-bind-error)
 
 (cl-defstruct (blood-bind--store
@@ -64,9 +65,10 @@
                (:constructor make--blood-bind-store-internal)
                )
   " The main store of all profiles, pre- and post- compilation "
-  (profiles (make-hash-table)    :type 'hash-table)
-  (collections (make-hash-table) :type 'hash-table)
-  (compiled (make-hash-table)    :type 'hash-table)
+  (profiles    (make-hash-table)    :type 'hash-table)
+  (collections (make-hash-table)    :type 'hash-table)
+  (transforms  (make-hash-table)    :type 'hash-table)
+  (compiled    (make-hash-table)    :type 'hash-table)
   )
 
 (cl-defstruct (blood-bind--collection
@@ -85,6 +87,7 @@ on profile (apply default): (setq python-mode-map python-profile-default-map)
   (source  nil    :type 'string :read-only t)
   (type    nil    :type 'symbol :read-only t)
   (entries nil    :type 'list   :read-only t)
+  (locals  nil    :type 'list   :read-only t)
   (globals nil    :type 'list   :read-only t)
   )
 
@@ -111,12 +114,22 @@ can be:
 ([pattern]  :kw (:bind 'local))  : local binding
 
  "
-  (pattern  nil  :type 'blood-bind--pattern :read-only t)
-  (operator nil  :type 'symbol              :read-only t)
-  (target   nil  :type 'symbol-or-kw        :read-only t)
-  (meta     nil  :type 'plist               :read-only t)
-  (file     nil  :type 'str                 :read-only t)
-  (expanded nil  :type 'bool                :read-only t)
+  (pattern  nil  :type 'blood-bind--pattern  :read-only t)
+  (operator nil  :type 'symbol               :read-only t)
+  (target   nil  :type (or 'keyword 'symbol) :read-only t)
+  (meta     nil  :type 'plist                :read-only t)
+  (file     nil  :type 'str                  :read-only t)
+  (expanded nil  :type 'bool                 :read-only t)
+  )
+
+(cl-defstruct (blood-bind--transform
+               (:constructor nil)
+               (:constructor make--blood-bind-transform-internal))
+  "Describes a registered transform "
+  (pattern     nil :type 'blood-bind--pattern        :read-only t)
+  (replacement nil :type (or 'symbol 'pattern) :read-only t)
+  (sort        nil :type 'int                        :read-only t)
+  (source      nil :type 'str                        :read-only t)
   )
 
 (cl-defstruct (blood-bind--pattern
@@ -129,49 +142,66 @@ eg: ('python-mode-map 'normal
   (meta     nil   :type 'plist  :read-only t)
   )
 
-(cl-defstruct (blood-bind--transform
-               (:constructor nil)
-               (:constructor make--blood-bind-transform-internal))
-  "Describes a registered transform"
-  (name nil :type 'symbol :read-only t)
-  (type nil :type 'symbol :desc "pattern | entry | map | token" :read-only t)
-  )
-
 ;; Ctors and util;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun make-blood-bind-profile (name source entries) ;; -> collection[profile]
-  " make and register a collection that amounts to a profile "
-
+(defun make-blood-bind-collection (name docstr source entries &optional globals type) ;; -> collection
+  "Make and register a collection of binding entries"
+  (cl-assert (symbolp name))
+  (cl-assert (stringp docstr))
+  (cl-assert (stringp source))
+  (cl-assert (plistp entries))
+  (cl-assert (cl-every #'symbolp globals))
+  (cl-assert (and (or (null type)
+                      (symbolp type))
+                  (-contains-p
+                   (mapcar #'car (cdr (cl-struct-slot-info 'blood-bind--store)))
+                   (or type 'collections))))
+  (unless blood-bind-global-store (setq blood-bind-global-store (make--blood-bind-store-internal)))
+  (puthash name (make--blood-bind-collection-internal :name name
+                                                      :docstr docstr
+                                                      :source source
+                                                      :type (or type 'collections)
+                                                      :entries (plist-get entries :entries)
+                                                      :locals (plist-get entries :locals)
+                                                      :globals globals
+                                                      )
+           (cl-struct-slot-value 'blood-bind--store
+                                 (or type  'collections)
+                                 blood-bind-global-store)
+           )
   )
 
-(defun make-blood-bind-collection (name docstr source entries) ;; -> collection[profile]
-  "Make and register a collection of binding entries"
-  (let (built-entries
-        curr
+(defun make-blood-bind-entries (source raw) ;; -> plist(:locals :entries)
+  (cl-assert (stringp source))
+  (cl-assert (listp raw))
+  (let (entries
+        locals
         )
-    (while entries
-      (pcase (seq-first entries)
+    (while raw
+      (pcase (seq-first raw)
+        ((and x (pred blood-bind--entry-p))
+         (push (seq-first raw) entries)
+         (setq raw (seq-rest raw)))
         ((and x (pred keywordp) (guard (-contains-p bbs-lhs-kwds x)))
          ;; let binding
-         (setq curr (seq-take entries 4))
-         (push (apply #'make-blood-bind-entry curr) built-entries)
-         (setq entries (seq-drop entries 4)))
+         (push (apply #'make-blood-bind-entry
+                      source
+                      (append (seq-rest (seq-take raw 4))
+                              (list :let)))
+               locals)
+         (setq raw (seq-drop raw 4)))
         ((pred vectorp)
          ;; normal binding
-         (setq curr (seq-take entries 3))
-         (push (apply #'make-blood-bind-entry curr) built-entries)
-         (setq entries (seq-drop entries 3)))
-        (x (signal 'blood-bind-parse-error x))
+         (push (apply #'make-blood-bind-entry
+                        source
+                        (seq-take raw 3))
+               entries)
+         (setq raw (seq-drop raw 3)))
+        (x
+         (signal 'blood-bind-parse-error x))
         )
       )
-    (unless blood-bind-global-store (setq blood-bind-global-store (make--blood-bind-store-internal)))
-    (puthash name (make--blood-bind-collection-internal :name name
-                                                        :docstr docstr
-                                                        :source source
-                                                        :entries built-entries
-                                                        )
-             (blood-bind--store-collections blood-bind-global-store)
-             )
+    (list :locals (reverse locals) :entries (reverse entries))
     )
   )
 
@@ -184,12 +214,14 @@ eg: ('python-mode-map 'normal
         )
     (pcase rhs
       ((pred plistp)
+       ;; meta plist
        (setq target (plist-get rhs :target)
              meta   rhs
              )
        (cl-remf meta :target)
        )
       ((pred symbolp)
+       ;; target symbol
        (setq target rhs
              meta nil)
         )
@@ -207,6 +239,38 @@ eg: ('python-mode-map 'normal
                                      :file     source
                                      :meta     meta
                                      )
+    )
+  )
+
+(defun make-blood-bind-transforms (source raw) ;; -> plist(:entries list[transform])
+  "build a transfrom description"
+  (let (transforms
+        )
+    (while raw
+      (pcase (seq-first raw)
+        ((and x (pred blood-bind--transform-p))
+         (push x transforms)
+         (setq raw (seq-rest raw)))
+        ((pred vectorp)
+         (cl-destructuring-bind (patt op target) (seq-take raw 3)
+           (push (make--blood-bind-transform-internal
+                  :pattern (bbs-parse-pattern patt)
+                  :replacement (pcase target
+                                 ((pred vectorp)
+                                  (bbs-parse-pattern target))
+                                 ((pred symbolp)
+                                  target)
+                                 )
+                  :source source
+                  )
+                 transforms)
+           )
+         (setq raw (seq-drop raw 3))
+         )
+        (x (signal 'blood-bind-parse-error 'transforms x))
+        )
+      )
+    (list :entries (reverse transforms))
     )
   )
 

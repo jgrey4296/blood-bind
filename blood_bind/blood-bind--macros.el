@@ -13,15 +13,16 @@
   (require 'blood-bind--compile)
   )
 
-(cl-defmacro bloodbind! (name (&optional type)
+(cl-defmacro bloodbind! (name (&rest args)
                               &optional docstr
                               &rest body
-                              &key override
+                              &key override type
                               &allow-other-keys
                               )
   "Adds entries into the a profile in the registry
 using the bloodbind DSL.
 Doesn't check for conflicts, or do expansions.
+
 
 DSL:
 {pattern} {op} {target} {meta}?
@@ -74,41 +75,53 @@ Values:
  "
   (declare (indent defun))
   (let* ((source (macroexp-file-name))
-         (docstring (pcase docstr ;; if docstring, use it
+         (docstring (pcase docstr
+                      ;; if docstring, use it
                       ((pred stringp) docstr)
-                      (x ;; else its part of the body
-                       (push x body)
-                       nil
-                       )))
+                      ;; else its part of the body
+                      (x (push x body) nil)))
          (namesym (gensym! 'bloodbind name)) ;; gen name to register under
-         (bodysym (gensym "body"))
+         (entrysym (gensym "entries"))
          (clean-body (pop-plist-from-body! body))
          check   ;; unless-check
          )
     ;; assert type = bind | profile
-    `(make-blood-bind-profile ,namesym ,docstring ,source ,clean-body)
-      )
+    `(progn ;; unlesscheck
+       (let ((,entrysym (make-blood-bind-entries ,source ,clean-body)))
+         (make-blood-bind-profile ,namesym ,docstring ,entrysym ,clean-body ,args)
+         )
+       )
     )
+  )
 
-(cl-defmacro bloodform! (name (&optional type)
-                                   &optional docstr
-                                   &rest body
-                                   &key override
-                                   &allow-other-keys)
+(cl-defmacro bloodform! (name ()
+                              &optional docstr
+                              &rest body
+                              &key override
+                              &allow-other-keys)
   "Declare compilation time transforms of patterns.
-Types :
-(pattern) = [pattern]  -> [pattern]
-(entry)   = entry-spec -> lambda
-(map)     = maps*      -> ([pattern] -> [pattern])*
-(token)   = [ token ]  -> token | kwd | map
+(pattern) = [pattern]  -> [pattern] | fn | symbol | list
 "
   (declare (indent defun))
   (let* ((source (macroexp-file-name))
+         (docstring (pcase docstr
+                      ;; if docstring, use it
+                      ((pred stringp) docstr)
+                      ;; else its part of the body
+                      (x (push x body) nil)))
          (clean-body (pop-plist-from-body! body))
          )
 
-    `(unless ,@unlesscheck
-
+    `(progn ;; ,@unlesscheck
+       (let ((,entrysym (make-blood-bind-transforms ,source ,clean-body)))
+         (make-bood-bind-collection ,name
+                                    ,docstr
+                                    ,source
+                                    ,clean-body
+                                    nil
+                                    'transforms
+                                    )
+         )
        )
     )
   )

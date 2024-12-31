@@ -11,11 +11,13 @@
 
 (defconst blood-bind-version "0.1.0")
 
+(cl-assert (<= 29 emacs-major-version))
+(cl-assert (<= 3 emacs-minor-version))
+
 (require 'blood-bind--util)
 (require 'blood-bind--structs)
 (require 'blood-bind--macros)
 (require 'blood-bind--hooks)
-
 (require 'blood-bind--compile)
 (require 'blood-bind--reporter)
 

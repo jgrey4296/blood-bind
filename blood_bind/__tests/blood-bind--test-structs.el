@@ -32,8 +32,8 @@ eg: cl-class-p
 "
   (let ((actual-test (and test (funcall test))))
     (if (funcall actual-test (funcall expr))
-        (cons t (format "Didn't expect to pass %s, but did" actual-test))
-      (cons nil (format "Expected to pass %s, but didn't" actual-test))
+        (cons t (format "Didn't expect to pass %s, but did: %s" actual-test (funcall expr)))
+      (cons nil (format "Expected to pass %s, but didn't: %s" actual-test (funcall expr)))
         )
     )
   )
@@ -42,14 +42,23 @@ eg: cl-class-p
   "Get the slot from a struct slot of the result of expr "
   (let* ((expr-result (funcall expr))
          (uneval-expr (buttercup--enclosed-expr expr))
-         (slot-val (cl-struct-slot-value (funcall type) (funcall slot) expr-result))
-         (slotw `(lambda () (quote ,uneval-expr) ,(if (symbolp slot-val)
-                                                      `(quote ,slot-val)
-                                                    slot-val)))
+         (slot-val (cl-struct-slot-value (funcall type)
+                                         (funcall slot)
+                                         expr-result))
+         (slotw `(lambda () (quote ,uneval-expr) (quote ,slot-val)))
          (matcher (funcall matcher))
-         result
          )
-    (funcall #'buttercup--apply-matcher matcher (cons slotw args))
+    (buttercup--apply-matcher matcher (cons slotw args))
+    )
+)
+
+(buttercup-define-matcher :has-length (expr val)
+  (let ((ex-val (funcall expr)))
+    (cons (and (sequencep ex-val)
+               (eq (seq-length ex-val)
+                   (funcall val)))
+          (format "Expected length %s but got %s" (funcall val) (seq-length ex-val))
+          )
     )
   )
 
@@ -75,7 +84,7 @@ eg: cl-class-p
     )
   )
 
-(describe "entry"
+(describe "entry singular"
   (it "is a sanity test" (expect t :to-be (not nil)))
   (it "can build a basic entry"
     (expect (make-blood-bind-entry "" [a b c] ':: #'blah) :to-pass #'blood-bind--entry-p)
@@ -98,7 +107,52 @@ eg: cl-class-p
 
 )
 
-(describe "pattern tests"
+(describe "entry multiple"
+  (it "is a sanity test" (expect t :to-be (not nil)))
+  (it "should parse an empty list"
+    (expect (make-blood-bind-entries "source" nil) :to-pass #'plistp)
+    (expect (plist-get (make-blood-bind-entries "source" nil) :locals) :to-pass #'null)
+    (expect (plist-get (make-blood-bind-entries "source" nil) :entries) :to-pass #'null)
+    )
+  (it "should parse a non-empty list into a plist"
+    (expect (make-blood-bind-entries "source" (list
+                                               [a b c] ':: #'blah
+                                               ))
+            :to-pass #'plistp)
+    (expect (plist-get (make-blood-bind-entries "source" (list
+
+                                               [a b c] ':: #'blah
+                                               )) :entries)
+            :has-length 1)
+    (expect (plist-get (make-blood-bind-entries "source" (list
+                                                          :let [a b c] '-> #'blah
+                                                          :let [d b c] '-> #'bloo
+                                                          )) :locals)
+            :has-length 2)
+
+    )
+  (it "should pass through already existing entries"
+    (expect (plist-get (make-blood-bind-entries "source" (list
+                                                          (make-blood-bind-entry "" [a b c] ':: #'blah)
+                                                          )) :entries)
+            :has-length 1)
+    )
+  (it "should not complain about conflicts"
+    (expect (plist-get (make-blood-bind-entries "source" (list
+                                                          (make-blood-bind-entry "" [a b c] ':: #'blah)
+                                                          (make-blood-bind-entry "" [a b c] ':: #'blah)
+                                                          )) :entries)
+            :has-length 2)
+    )
+  (it "should raise errors on bad args"
+    (expect (make-blood-bind-entries 'bad-source nil)
+            :to-signal 'cl-assertion-failed)
+    (expect (make-blood-bind-entries "source" 'bad-data)
+            :to-signal 'cl-assertion-failed)
+    )
+  )
+
+(describe "pattern"
   ;; Specs:
   (it "is a sanity test" (expect t :to-be (not nil)))
   (it "can be built with basic values"
@@ -135,19 +189,44 @@ eg: cl-class-p
     )
 )
 
-(describe "transform tests"
-  ;; Vars:
-  :var (a)
-  ;; Setup
-  (before-each nil)
-  ;; Teardown
-  (after-each nil)
-  ;; Specs:
+(describe "transform"
+  :var (entry)
   (it "is a sanity test" (expect t :to-be (not nil)))
+  (it "should build an empty transform plist"
+    (expect (make-blood-bind-transforms "source" nil) :to-pass #'plistp)
+    (expect (plist-get (make-blood-bind-transforms "source" nil) :entriess) :to-be nil)
+    )
+  (it "should build a non-empty-transform plist"
+    (expect (make-blood-bind-transforms "source" (list
+                                                  [a b c] '-> [a b c]
+                                                  )) :to-pass #'plistp)
+    (expect (plist-get (make-blood-bind-transforms "source" (list
+                                                  [a b c] '-> [a b c]
+                                                  )) :entries)
+            :has-length 1)
 
+    (expect (car (plist-get (make-blood-bind-transforms "source" (list
+                                                       [a b c] '-> [a b c]
+                                                       )) :entries))
+            :to-pass #'blood-bind--transform-p)
+    )
+  (it "should have a pattern and replacement"
+    (setq entry (car (plist-get (make-blood-bind-transforms "source" (list
+                                                          [a b c] '-> [a b c]
+                                                          )) :entries)))
+    (expect (blood-bind--transform-pattern entry) :to-pass #'blood-bind--pattern-p)
+    (expect (blood-bind--transform-replacement entry) :to-pass #'blood-bind--pattern-p)
+    )
 )
 
-(describe "collection tests"
+(describe "collection"
+  :var (entries)
+  (before-all
+    (setq entries (make-blood-bind-entries "source"
+                                           (list
+                                            (make-blood-bind-entry "" [a b c] ':: #'test)
+                                            )))
+    )
   (before-each
     (setq blood-bind-global-store (make--blood-bind-store-internal)))
   (it "is a sanity test" (expect t :to-be (not nil)))
@@ -162,24 +241,40 @@ eg: cl-class-p
             :slot 'blood-bind--collection 'source :to-equal "a/file.txt")
     )
   (it "can build non-empty-collections"
-    (expect (make-blood-bind-collection 'test
-                                        ""
-                                        ""
-                                        (list
-
-                                         )
+    (expect (make-blood-bind-collection 'test "doc" "source" entries)
+                                        :to-pass #'blood-bind--collection-p)
+    )
+  (it "has entries as a list"
+    (expect (make-blood-bind-collection 'test "doc" "source" entries)
+            :slot 'blood-bind--collection 'entries :to-pass #'listp)
+    )
+  (it "signals assertion failures on bad args"
+    (expect (make-blood-bind-collection "bad name" nil nil nil) :to-signal 'cl-assertion-failed)
+    (expect (make-blood-bind-collection 'name 'bad-doc nil nil) :to-signal 'cl-assertion-failed)
+    (expect (make-blood-bind-collection 'name "doc" 'bad-source nil) :to-signal 'cl-assertion-failed)
+    (expect (make-blood-bind-collection 'name "doc" "source"
+                                        (list 'bad-entries))
+            :to-signal 'cl-assertion-failed)
+    (expect (make-blood-bind-collection 'name "doc" "source"
+                                        (list :entries nil :locals nil)
+                                        (list "bad-globals"))
+            :to-signal 'cl-assertion-failed)
+    (expect (make-blood-bind-collection 'name "doc" "source"
+                                        (list :entries nil :locals nil)
+                                        (list 'global1 'global2)
+                                        'bad-type
                                         )
-            :to-pass #'blood-bind--collection-p)
+            :to-signal 'cl-assertion-failed)
     )
 )
 
-(describe "collection profile tests"
+(describe "profiles"
   ;; Specs:
   (it "is a sanity test" (expect t :to-be (not nil)))
 
   )
 
-(describe "compiled tests"
+(describe "compiled"
   ;; Vars:
   :var (a)
   ;; Setup
@@ -191,7 +286,7 @@ eg: cl-class-p
 
 )
 
-(describe "store tests"
+(describe "store"
   ;; Vars:
   :var (a)
   ;; Setup
