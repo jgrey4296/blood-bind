@@ -63,6 +63,8 @@ j) declare bindings/profiles into `bloodbind--registry` using `bloodbind!`
 - set-keymap-parent
 - make-composed-keymap
 - keymap-lookup
+- keymap--check
+- key-parse
 
 ### Current External
 - bind-keys*
