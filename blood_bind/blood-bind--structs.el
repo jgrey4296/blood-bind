@@ -9,66 +9,21 @@
 (eval-when-compile
   (require 'cl-lib)
   (require 'seq)
+  (require 'blood-bind--vars)
   )
-
-(defvar bbs-type-kwds           (list :profile ))
-
-(defvar bbs-entry-type-kwds     (list :let :endlet))
-
-(defvar bbs-lhs-patt-bool-kwds  (list :root :remap :local :implicit-prefix))
-
-(defvar bbs-lhs-patt-val-kwds   (list :map :state :remap :local))
-
-(defvar bbs-op-kwds             (list :let :bind :submap))
-
-(defvar bbs-rhs-kwds            (list :toggle :hook :on-compile :desc :allow-override))
-
-(defvar bbs-lhs-symbol-alist   (list '(_ . :implicit-prefix)
-                                     '(\* . :glob)
-                                     '(? . :insert)
-                                     '(!! . :override)
-                                     )
-  "A reverse Plist to remap shorthand pattern symbols to their bool keywords"
-  )
-
-(defvar bbs-op-symbol-alist    (list '(-> . :let) '(:: . :bind) '(=> . :submap))
-  "A reverse Plist to remap shorthand operator symbols to their keywords"
-  )
-
-(defvar bbs-lhs-kwd-suffix-alist (list
-                                  '("!" . (:map "-mode-map"))
-                                  '("&" . (:map "-minor-mode-map"))
-                                  '("^" . (:map "-map"))
-                                  '("?" . (:state nil))
-                                  )
-  "Alist for converting a suffix of a keyword"
-  )
-
-(defvar bbs-lhs-sep-sym :|:  "Symbol that separates metadata from keybinding")
-
-(defconst bbs-major-map-suffix "!")
-
-(defconst bbs-minor-map-suffix "&")
-
-(defconst bbs-explicit-map-suffix "^")
-
-(defvar blood-bind-global-store nil)
 
 ;; structs ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define-error 'blood-bind-error "General Blood Bind Error")
-
-(define-error 'blood-bind-parse-error "Parsing an entry failed" 'blood-bind-error)
 
 (cl-defstruct (blood-bind--store
                (:constructor nil)
                (:constructor make--blood-bind-store-internal)
                )
   " The main store of all profiles, pre- and post- compilation "
-  (profiles    (make-hash-table)    :type 'hash-table)
-  (collections (make-hash-table)    :type 'hash-table)
-  (transforms  (make-hash-table)    :type 'hash-table)
-  (compiled    (make-hash-table)    :type 'hash-table)
+  (profiles     (make-hash-table)    :type 'hash-table)
+  (collections  (make-hash-table)    :type 'hash-table)
+  (transforms   (make-hash-table)    :type 'hash-table)
+  (compiled     (make-hash-table)    :type 'hash-table)
+  (partial-maps (make-hash-table)    :type 'hash-table)
   )
 
 (cl-defstruct (blood-bind--collection
@@ -92,10 +47,10 @@ on profile (apply default): (setq python-mode-map python-profile-default-map)
   )
 
 (cl-defstruct (blood-bind--compiled
-              (:constructor nil)
+               (:constructor nil)
                (:constructor make--blood-bind-compiled-internal)
                )
-  " The compiled profile, with local maps
+  " A compiled profile of bindings.
 when applied, loops (setq maps.key maps.value)
 "
   (name nil               :type 'symbol   :read-only t)
@@ -156,7 +111,7 @@ eg: ('python-mode-map 'normal
                   (-contains-p
                    (mapcar #'car (cdr (cl-struct-slot-info 'blood-bind--store)))
                    (or type 'collections))))
-  (unless blood-bind-global-store (setq blood-bind-global-store (make--blood-bind-store-internal)))
+  (unless blood-bind--registry (setq blood-bind--registry (make--blood-bind-store-internal)))
   (puthash name (make--blood-bind-collection-internal :name name
                                                       :docstr docstr
                                                       :source source
@@ -167,7 +122,7 @@ eg: ('python-mode-map 'normal
                                                       )
            (cl-struct-slot-value 'blood-bind--store
                                  (or type  'collections)
-                                 blood-bind-global-store)
+                                 blood-bind--registry)
            )
   )
 
@@ -182,7 +137,7 @@ eg: ('python-mode-map 'normal
         ((and x (pred blood-bind--entry-p))
          (push (seq-first raw) entries)
          (setq raw (seq-rest raw)))
-        ((and x (pred keywordp) (guard (-contains-p bbs-lhs-kwds x)))
+        ((and x (pred keywordp) (guard (-contains-p bbv-entry-type-kwds x)))
          ;; let binding
          (push (apply #'make-blood-bind-entry
                       source
@@ -317,20 +272,20 @@ eg: ('python-mode-map 'normal
 "
   (cond
    ;; meta :|: keys
-   ((eq bbs-lhs-sep-sym val) t)
+   ((eq bbv-lhs-sep-sym val) t)
    ;; convert shorthands
-   ((alist-get val bbs-lhs-symbol-alist)
-    `(,(alist-get val bbs-lhs-symbol-alist) t))
+   ((alist-get val bbv-lhs-symbol-alist)
+    `(,(alist-get val bbv-lhs-symbol-alist) t))
    ;; recognize remaps
    ((and (consp val) (eq (car-safe val) 'function)) '(:remap t))
    ;; recognize boolean kwds
-   ((and (keywordp val) (-contains-p bbs-lhs-patt-bool-kwds val))
+   ((and (keywordp val) (-contains-p bbv-lhs-patt-bool-kwds val))
     `(,val t))
    ;; recognize valued cons'
-   ((and (keywordp (car-safe val)) (-contains-p bbs-lhs-patt-val-kwds (car-safe val))) val)
+   ((and (keywordp (car-safe val)) (-contains-p bbv-lhs-patt-val-kwds (car-safe val))) val)
    ;; convert complex keywords
    ((keywordp val)
-    (pcase (alist-get (substring (symbol-name val) -1) bbs-lhs-kwd-suffix-alist nil nil 'equal)
+    (pcase (alist-get (substring (symbol-name val) -1) bbv-lhs-kwd-suffix-alist nil nil 'equal)
       ('nil nil)
       (`(,x ,y) `(,x ,(intern (format "%s%s" (substring (symbol-name val) 1 -1) (or y "")))))
       ))
@@ -341,7 +296,7 @@ eg: ('python-mode-map 'normal
 
 (defun bbs-parse-op (op) ;; -> maybe[kwd]
   (cl-assert (symbolp op) nil "op needs to be a symbol")
-  (alist-get op bbs-op-symbol-alist)
+  (alist-get op bbv-op-symbol-alist)
   )
 
 (defun bbs-pattern-key-parse (val) ;; -> list
@@ -371,5 +326,6 @@ eg: ('python-mode-map 'normal
 ;; Local Variables:
 ;; read-symbol-shorthands: (
 ;; ("bbs-" . "blood-bind--structs-")
+;; ("bbv-" . "blood-bind--vars-")
 ;; )
 ;; End:
