@@ -86,6 +86,9 @@ unless `strict', in which case error
   )
 
 (defun bbc-compile-pattern-to-string (pattern) ;; -> string
+  "Convert a pattern to a key-valid-p string,
+also running any registered transforms
+"
   (cl-assert (blood-bind--pattern-p pattern))
   (let* ((keys (blood-bind--pattern-keys pattern))
          keystr
@@ -102,6 +105,29 @@ unless `strict', in which case error
   (cl-assert (cl-every #'keymapp maps))
   (keymap-canonicalize (make-composed-keymap maps))
   )
+
+(defun bbc-get-collection-map-names (coll) ;; -> list[symbol]
+  "From a collection, get all map names,
+including those defined in:
+- let bindings,
+- states
+- major mode
+- minor mode
+- explicitly
+ "
+  (cl-assert (blood-bind--collection-p coll))
+  (let (result)
+    (cl-loop for entry in (blood-bind--collection-entries coll)
+             for meta  = (blood-bind--pattern-meta (blood-bind--entry-pattern entry))
+             when (plist-get meta :map)
+             do (add-to-list result (plist-get meta :map))
+             when (plist-get meta :state)
+             do (add-to-list result (plist-get meta :state))
+             )
+    result
+    )
+  )
+
 
 (provide 'blood-bind--compile)
 

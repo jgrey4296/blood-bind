@@ -24,9 +24,10 @@
   [ :yas& a b] :: #'cmd
   ;; state map binding
   [ :normal? a b ] :: #'cmd
+  [ :n? a b]       :: #'cmd
   ;; Combined:
   [ :python! :insert? a b] :: #'cmd
-  ;; Separated
+  ;; meta :|: bindings
   [ :python! :insert? :|: a b ] :: #'cmd
 
   ;; local map override
@@ -37,18 +38,25 @@
   )
 
 (bloodbind! decl-mode ()
-  "docstring for map closure"
+  "Variable declarations "
   ;; set the map(s) for everything that comes after
-  :let $_ = [ :python! :insert ] ;; implicit head pattern
-  ;; This is bound to [python-mode-map a b]
+  :let [ :python! :insert ] -> _ ;; implicit head pattern
+  ;; This is bound to [python-mode-map insert-state a b]
   [ _ a b ] :: #'cmd
   :let $_ = nil ;; remove/change  head pattern
   :let $_ = []
   )
 
-(bloodbind! aprofile (:profile)
-  "docstring of a profile"
-  [a b] :: #'cmd
+(bloodbind! aprofile ()
+  "A Profile definition.
+Compiles mentioned bind groups into a collection of maps,
+that can be activated.
+"
+  :profile t
+  [ :basic$ ]          => _ ;; use all of basic
+  [ :basic$ :python! ] => _ ;; use only basic's python-mode-map bindings
+  [ :decl-mode$ ]      => _ ;; merge in decl-mode's binding
+  [ :basic$ a b c * ]  => [a] ;; use all basic's [a b c ..] bindings, as [a ...]
   )
 
 (bloodbind! wildcards ()

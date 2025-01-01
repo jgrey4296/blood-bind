@@ -73,7 +73,7 @@ can be:
   (operator nil  :type 'symbol               :read-only t)
   (target   nil  :type (or 'keyword 'symbol) :read-only t)
   (meta     nil  :type 'plist                :read-only t)
-  (file     nil  :type 'str                  :read-only t)
+  (source   nil  :type 'str                  :read-only t)
   (expanded nil  :type 'bool                 :read-only t)
   )
 
@@ -191,7 +191,7 @@ eg: ('python-mode-map 'normal
     (make--blood-bind-entry-internal :pattern  pattern
                                      :operator operator
                                      :target   rhs
-                                     :file     source
+                                     :source   source
                                      :meta     meta
                                      )
     )

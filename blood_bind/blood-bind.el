@@ -22,7 +22,7 @@
 (require 'blood-bind--reporter)
 
 (defun blood-bind-apply (profile &optional merge)
-  " apply compiled keymaps to non-blood-bind variables"
+  " apply a profile of compiled keymaps to non-blood-bind variables"
   (interactive)
   ;; retrieve keymaps from registry
   ;; set their respective variables
