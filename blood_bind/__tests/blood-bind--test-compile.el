@@ -44,6 +44,60 @@
 
 )
 
+(describe "local bindings are used"
+  ;; Vars:
+  :var (a)
+  ;; Setup
+  (before-each nil)
+  ;; Teardown
+  (after-each nil)
+  ;; Specs:
+  (it "is a sanity test" (expect t :to-be (not nil)))
+
+)
+
+(describe "global bindings are used"
+  ;; Vars:
+  :var (a)
+  ;; Setup
+  (before-each nil)
+  ;; Teardown
+  (after-each nil)
+  ;; Specs:
+  (it "is a sanity test" (expect t :to-be (not nil)))
+
+)
+
+(describe "collections build multiple partial maps"
+  ;; Vars:
+  :var (a)
+  ;; Setup
+  (before-each nil)
+  ;; Teardown
+  (after-each nil)
+  ;; Specs:
+  (it "is a sanity test" (expect t :to-be (not nil)))
+
+)
+
+(describe "combining partial maps"
+  (it "is a sanity test" (expect t :to-be (not nil)))
+
+)
+
+(describe "get map names"
+  ;; Vars:
+  :var (a)
+  ;; Setup
+  (before-each nil)
+  ;; Teardown
+  (after-each nil)
+  ;; Specs:
+  (it "is a sanity test" (expect t :to-be (not nil)))
+
+)
+
+
 ;; Local Variables:
 ;; read-symbol-shorthands: (
 ;; ("bbc-" . "blood-bind--compile-")

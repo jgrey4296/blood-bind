@@ -77,7 +77,7 @@ eg: cl-class-p
       ('pattern (blood-bind--entry-pattern entry))
       ('op (blood-bind--entry-operator entry))
       ('target (blood-bind--entry-target entry))
-      ('file (blood-bind--entry-file entry))
+      ('source (blood-bind--entry-source entry))
       ('meta (blood-bind--entry-meta entry))
       (_ entry)
       )
