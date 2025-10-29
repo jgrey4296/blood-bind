@@ -1,10 +1,21 @@
-;;; blood_bind.el -*- lexical-binding: t; no-byte-compile: t; -*-
-;;-- Header
-;; File Commentary:
-;; The public access api to blood-bind
+;;; blood-bind.el --- A keybinding framework -*- lexical-binding: t; no-byte-compile: t; -*-
+
+;; Copyright (C) 2025 john
 ;;
+;; Author: john <https://github.com/jgrey4296>
+;; Created: October 29, 2025
+;; Modified: October 29, 2025
+;; Version: 0.1.0
+;; Keywords:
+;; Homepage: https://github.com/jgrey4296/blood-bind
+;; Package-Requires: ((emacs "30.2"))
+;; Package written on: ((emacs 30.2))
 ;;
-;;-- end Header
+;; This file is not part of GNU Emacs.
+;;
+
+;;; Commentary:
+
 (eval-when-compile
   (require 'cl-lib)
   )
@@ -12,7 +23,6 @@
 (defconst blood-bind-version "0.1.0")
 
 (cl-assert (<= 29 emacs-major-version))
-(cl-assert (<= 3 emacs-minor-version))
 
 (require 'blood-bind--util)
 (require 'blood-bind--structs)
@@ -66,21 +76,4 @@ inserting compiled-profile structs into the store ready to apply
 
 
 (provide 'blood-bind)
-
-;;-- Footer
-;; Copyright (C) 2024 john
-;;
-;; Author:     john <https://github.com/jgrey4296>
-;; Maintainer: john <john@john-UM700>
-;; Created:    February 08, 2024
-;; Modified:   February 08, 2024
-;; Version: 0.0.1
-;; Keywords:
-;; Homepage: https://github.com/jgrey4296
-;; Package-Requires: ((emacs "24.3"))
-;; Package written on: ((emacs 29.1))
-;;
-;; This file is not part of GNU Emacs.
-;;
-;;-- end Footer
 ;;; blood_bind.el ends here

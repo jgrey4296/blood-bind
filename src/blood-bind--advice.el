@@ -1,11 +1,4 @@
 ;;; blood-bind--advice.el -*- lexical-binding: t; no-byte-compile: t; -*-
-;;-- Header
-;; File Commentary:
-;;
-;;
-;;
-;;-- end Header
-
 (defun bba-block-keybindings-a (&rest args)
   "Advice to interrupt non-blood-bind keybindings.
 
@@ -32,23 +25,6 @@ Overrides functions listed in `blood-bind--vars-advice-targets'
   )
 
 (provide 'blood-bind--advice)
-
-;;-- Footer
-;; Copyright (C) 2024 john
-;;
-;; Author:     john <https://github.com/jgrey4296>
-;; Maintainer: john <john@john-UM700>
-;; Created:    December 31, 2024
-;; Modified:   December 31, 2024
-;; Version: 0.0.1
-;; Keywords:
-;; Homepage: https://github.com/jgrey4296
-;; Package-Requires: ((emacs "24.3"))
-;; Package written on: ((emacs 29.3))
-;;
-;; This file is not part of GNU Emacs.
-;;
-;;-- end Footer
 ;; Local Variables:
 ;; read-symbol-shorthands: (
 ;; ("bba-" . "blood-bind--advice-")

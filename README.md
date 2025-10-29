@@ -19,6 +19,7 @@ General is... big.
 - extendable dsl tokens, compilation, and keymap transforms
 - does *not* handle use or activation of keymaps, so does not interfere with evil or states machinery
 - does *not* handle key lookup, so does not interfere with emacs machinery
+- reserved spaces for bindings providing a certain symbol
 
 
 ## The DSL

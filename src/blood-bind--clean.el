@@ -1,12 +1,6 @@
 ;;; key-clean.el -*- lexical-binding: t; no-byte-compile: t; -*-
-;;-- Header
-;; File Commentary:
-;; key-clean.el, 2024-01-29.
 ;; Utilities to strip out annoying bindings from all keymaps such as:
 ;; C-{}, M-{}, C-M-{}, mouse, menu-bar, F1-F9...
-;;
-;; See footer for licenses/metadata/notes as applicable
-;;-- end Header
 
 (defun blood-bind--clean-undefine-metas (the-map)
   " For a keymap, remove all bindings of the form:
@@ -93,23 +87,6 @@
   )
 
 (provide 'blood-bind--clean)
-
-;;-- Footer
-;; Copyright (C) 2024 john
-;;
-;; Author:     john <https://github.com/jgrey4296>
-;; Maintainer: john <john@john-UM700>
-;; Created:    January 29, 2024
-;; Modified:   January 29, 2024
-;; Version: 0.0.1
-;; Keywords:
-;; Homepage: https://github.com/jgrey4296
-;; Package-Requires: ((emacs "24.3"))
-;; Package written on: ((emacs 29.1))
-;;
-;; This file is not part of GNU Emacs.
-;;
-;;-- end Footer
 ;;; key-clean.el ends here
 ;; Local Variables:
 ;; read-symbol-shorthands: (

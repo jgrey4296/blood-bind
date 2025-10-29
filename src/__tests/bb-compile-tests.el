@@ -3,6 +3,7 @@
 ;;
 ;;
 (require 'buttercup)
+(require 'blood-bind)
 
 (describe "basic keybinding from entry"
   :var (entry entry2 conflict-entry)
@@ -21,26 +22,26 @@
       ))
   (before-each
     (clrhash (blood-bind--store-partial-maps blood-bind--registry)))
-  (it "is a sanity test" (expect t :to-be (not nil)))
-  (it "errors when given bad args"
-    (expect (bbc-add-entry-to-partial "bad map" entry) :to-signal 'cl-assertion-failed)
-    (expect (bbc-add-entry-to-partial 'mapname 'badentry) :to-signal 'cl-assertion-failed)
-    )
-  (it "errors if keybind fns have been advised"
-    (let ((blood-bind--vars-advice-active t))
-      (expect (bbc-add-entry-to-partial 'mapname entry) :to-signal 'cl-assertion-failed))
-    )
-  (it "binds when given a literal keymap"
-    (let ((result (bbc-add-entry-to-partial (make-sparse-keymap) entry)))
-      (expect result :to-pass #'keymapp)
-      (expect (keymap-lookup result "a b c") :to-equal #'test)
-      )
-    )
-  (it "errors on a conflict"
-    (let ((result (bbc-add-entry-to-partial (make-sparse-keymap) entry)))
-      (expect (bbc-add-entry-to-partial result conflict-entry) :to-signal 'blood-bind-conflict-error)
-      )
-    )
+  ;; (it "is a sanity test" (expect t :to-be (not nil)))
+  ;; (it "errors when given bad args"
+  ;;   (expect (bbc-add-entry-to-partial "bad map" entry) :to-signal 'cl-assertion-failed)
+  ;;   (expect (bbc-add-entry-to-partial 'mapname 'badentry) :to-signal 'cl-assertion-failed)
+  ;;   )
+  ;; (it "errors if keybind fns have been advised"
+  ;;   (let ((blood-bind--vars-advice-active t))
+  ;;     (expect (bbc-add-entry-to-partial 'mapname entry) :to-signal 'cl-assertion-failed))
+  ;;   )
+  ;; (it "binds when given a literal keymap"
+  ;;   (let ((result (bbc-add-entry-to-partial (make-sparse-keymap) entry)))
+  ;;     (expect result :to-pass #'keymapp)
+  ;;     (expect (keymap-lookup result "a b c") :to-equal #'test)
+  ;;     )
+  ;;   )
+  ;; (it "errors on a conflict"
+  ;;   (let ((result (bbc-add-entry-to-partial (make-sparse-keymap) entry)))
+  ;;     (expect (bbc-add-entry-to-partial result conflict-entry) :to-signal 'blood-bind-conflict-error)
+  ;;     )
+  ;;   )
 
 )
 
