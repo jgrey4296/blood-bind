@@ -1,0 +1,80 @@
+#+TITLE: Blood Bind Design
+
+* Usage
+
+1) The User defines bindings:
+#+begin_src emacs-lisp :results output
+(bloodbind! basic ()
+  "docstring of basic examples"
+  ;; General form: [pattern] :: #'cmd (:metadata)*
+  ;; global, stateless bindings:
+  [a] :: #'cmd
+  ;; auto wrap lambdas with (interactive)
+  [b] :: #'(lambda () (message "blah"))
+
+  ;; major mode map binding:
+  [ :python! a b] :: #'cmd
+  ;; minor mode map binding:
+  [ :yas& a b] :: #'cmd
+  ;; state map binding
+  [ :normal? a b ] :: #'cmd
+  [ :n? a b]       :: #'cmd
+
+  ;; local map override
+  [ :python! :local a b ] :: #'cmd
+  )
+
+#+end_src
+
+This works by:
+- calling 'make-blood-bind-collection'
+- inserting the collection into 'blood-bind--registry'
+
+2) The user compiles a profile
+
+#+begin_src emacs-lisp :results output
+(blood-bind-compile 'basic)
+#+end_src
+
+Which is inserted into compiled-profile structs.
+
+3) The user applies a profile
+
+#+begin_src elisp :results output
+(blood-bind-apply 'basic)
+#+end_src
+
+Which inserts the compiled maps into emulation-mode-map-alists
+
+* Keymap hierarchy
+https://www.gnu.org/software/emacs/manual/html_node/elisp/Controlling-Active-Maps.html
+https://www.gnu.org/software/emacs/manual/html_node/elisp/Searching-Keymaps.html
+https://github.com/noctuid/evil-guide
+NOTE: See evil-core.el for full design of evil keybindings
+
+From highest to lowest priority:
+
+1) Overriding keymaps/overlay keymaps
+2) Emulation mode keymaps
+3) Evil keymaps
+4) Intercept keymaps
+5) Local state keymap
+6) Minor-mode keymaps
+7) Auxiliary keymaps
+8) Overriding keymaps
+9) Global state keymap
+10) Keymaps for other states
+11) Minor mode keymaps
+12) Local keymap (`local-set-key')
+13) Global keymap (`global-set-key')
+
+    
+* Entries
+** Patterns
+** Let bindings
+** Operators
+* Profiles
+** Compilation
+* The Registry
+* Application to keymaps
+* Links

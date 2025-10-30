@@ -5,13 +5,13 @@
   (require 'blood-bind--vars)
   )
 
-(defun bbe-add-kwd (type newkwd)
+(defun blood-bind--extend-add-kwd (type newkwd)
   "Add a new parse-time kwd"
   (cl-assert (symbolp type))
   (cl-assert (keywordp newkwd))
   )
 
-(defun bbe-add-symbol-conversion (type sym kwd)
+(defun blood-bind--extend-add-symbol-conversion (type sym kwd)
   "Add a new parse-time symbol -> kwd conversion"
   (cl-assert (symbolp type))
   (cl-assert (symbolp sym))
@@ -20,9 +20,4 @@
   )
 
 (provide 'blood-bind--extend)
-;; Local Variables:
-;; read-symbol-shorthands: (
-;; ("bbe-" . "blood-bind--extend-")
-;; )
-;; End:
 ;;; blood-bind--extend.el ends here

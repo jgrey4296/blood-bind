@@ -4,6 +4,7 @@
 ;;
 (require 'buttercup)
 (require 'blood-bind)
+(require 'blood-bind--buttercup)
 
 ;; binding ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -119,9 +120,3 @@
   (it "is a sanity test" (expect t :to-be (not nil)))
   )
 
-;; Local Variables:
-;; read-symbol-shorthands: (
-;; ("bbm-" . "blood-bind--macros-")
-;; ("bbs-" . "blood-bind--structs-")
-;; )
-;; End:

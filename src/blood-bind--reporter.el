@@ -1,34 +1,34 @@
 ;;; blood_bind_reporter.el -*- lexical-binding: t; no-byte-compile: t; -*-
 
-(defun bbr-conflict (&rest conflicts)
+(defun blood-bind--reporter-conflict (&rest conflicts)
   " report on conflicting patterns for debugging "
   (error "Not Implemented")
  )
 
-(defun bbr-overview-profiles ()
+(defun blood-bind--reporter-overview-profiles ()
   "Report on all registered profiles"
 
   )
 
-(defun bbr-overview-entries ()
+(defun blood-bind--reporter-overview-entries ()
   "report on all entries"
 
   )
 
-(defun bbr-overview-transforms ()
+(defun blood-bind--reporter-overview-transforms ()
   "report on all registered transforms"
 
   )
 
-(defun bbr-overview-maps ()
+(defun blood-bind--reporter-overview-maps ()
   "report on all maps bb has control over"
   )
 
-(defun bbr-dsl ()
+(defun blood-bind--reporter-dsl ()
   "Generate a description of the DSL"
   )
 
-(defun bbr-check-map (the-map)
+(defun blood-bind--reporter-check-map (the-map)
   " Take a keymap and print out all meta keys of the map "
   (cl-assert (keymapp the-map))
   (let ((c-xs (cl-loop for key in (number-sequence ?a ?z)
@@ -58,7 +58,7 @@
     )
   )
 
-(defun bbr-list-all-maps ()
+(defun blood-bind--reporter-list-all-maps ()
   " Get a list of all keymaps "
   (interactive)
   (let (allmaps)
@@ -73,7 +73,7 @@
     )
   )
 
-(defun bbr-name-all-maps ()
+(defun blood-bind--reporter-name-all-maps ()
   " Loop over all symbols and get any that are keymaps,
     Message the names of all those maps
  "
@@ -97,8 +97,3 @@
 
 (provide 'blood-bind--reporter)
 ;;; blood_bind_reporter.el ends here
-;; Local Variables:
-;; read-symbol-shorthands: (
-;; ("bbr-" . "blood-bind--reporter-")
-;; )
-;; End:

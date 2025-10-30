@@ -88,8 +88,3 @@
 
 (provide 'blood-bind--clean)
 ;;; key-clean.el ends here
-;; Local Variables:
-;; read-symbol-shorthands: (
-;; ("bbc-" . "blood-bind--clean-")
-;; )
-;; End:

@@ -8,7 +8,7 @@
 ;; Version: 0.1.0
 ;; Keywords:
 ;; Homepage: https://github.com/jgrey4296/blood-bind
-;; Package-Requires: ((emacs "30.2"))
+;; Package-Requires: ((emacs "30.2") (dash))
 ;; Package written on: ((emacs 30.2))
 ;;
 ;; This file is not part of GNU Emacs.
@@ -25,10 +25,9 @@
 (cl-assert (<= 29 emacs-major-version))
 
 (require 'blood-bind--util)
-(require 'blood-bind--structs)
+(require 'blood-bind-structs)
 (require 'blood-bind--macros)
 (require 'blood-bind--hooks)
-(require 'blood-bind--compile)
 (require 'blood-bind--reporter)
 
 (defun blood-bind-apply (profile &optional merge)

@@ -8,7 +8,7 @@
 (keywords )
 
 (package-file "src/blood-bind.el")
-(files "src/blood-bind--*.el")
+(files "src/blood-bind--*.el" "src/structs/*.el")
 
 (script "test" "echo \"Error: no test specified\" && exit 1")
 
@@ -16,3 +16,4 @@
 (source "melpa")
 
 (depends-on "emacs" "30.2")
+(depends-on "dash")

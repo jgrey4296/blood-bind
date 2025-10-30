@@ -1,6 +1,7 @@
-;;; bb-util-tests.el -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; bb-reporter-tests.el -*- lexical-binding: t; no-byte-compile: t; -*-
 (require 'buttercup)
 (require 'blood-bind)
+(require 'blood-bind--buttercup)
 
 (describe "sanity"
   ;; Specs:

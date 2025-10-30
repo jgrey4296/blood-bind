@@ -1,6 +1,30 @@
 ;;; blood_bind_compile.el -*- lexical-binding: t; no-byte-compile: t; -*-
 
-(defun bbc-profile (profile) ;; bbs-profile -> bbs-compiled
+(eval-when-compile
+  (require 'cl-lib)
+  (require 'seq)
+  (require 'dash)
+  (require 'blood-bind--vars)
+  (require 'blood-bind--advice)
+  )
+
+;;--------------------------------------------------
+
+(cl-defstruct (blood-bind--compiled
+               (:constructor nil)
+               (:constructor make--blood-bind-compiled-internal)
+               )
+  " A compiled profile of bindings.
+when applied, loops (setq maps.key maps.value)
+"
+  (name nil               :type 'symbol   :read-only t)
+  (source nil             :type 'string   :read-only t)
+  (maps (make-hash-table) :type 'hash-table)
+  )
+
+;;--------------------------------------------------
+
+(defun blood-bind--compile-profile (profile) ;; bbs-profile -> bbs-compiled
   "Compiles a named profile with the segments it describes"
   (cl-assert (symbolp profile))
   (cl-assert (not (null blood-bind--registry)))
@@ -18,7 +42,7 @@
   (error "Not Implemented")
   )
 
-(defun bbc-entry (entry) ;; bbs-entry -> list
+(defun blood-bind--compile-entry (entry) ;; bbs-entry -> list
   "Compile an entry into relevant partial maps"
   (cl-assert (not (null blood-bind--registry)))
   ;; get maps[entry.pattern.map|state] -> profilemap
@@ -28,7 +52,7 @@
   (error "Not Implemented")
   )
 
-(defun bbc-gen-maps () ;; -> hash-table[sym, keymap]
+(defun blood-bind--compile-gen-maps () ;; -> hash-table[sym, keymap]
   "Generate the empty keymaps blood-bind will put bindings into,
 from registered maps in `blood-bind--registry'
 "
@@ -36,7 +60,7 @@ from registered maps in `blood-bind--registry'
   (error "Not Implemented")
   )
 
-(defun bbc-make-partial-map (name &optional strict) ;; -> keymap
+(defun blood-bind--compile-make-partial-map (name &optional strict) ;; -> keymap
   "Add a new partial map to the global registry and return it.
 If the partial map already exists, just return it,
 unless `strict', in which case error
@@ -52,18 +76,18 @@ unless `strict', in which case error
   (gethash name (blood-bind--store-partial-maps blood-bind--registry))
   )
 
-(defun bbc-add-entry-to-partial (partial entry)
+(defun blood-bind--compile-add-entry-to-partial (partial entry)
   "Add an entry to a given partial map"
   (cl-assert (or (symbolp partial) (keymapp partial)))
   (cl-assert (blood-bind--entry-p entry))
-  (cl-assert (not blood-bind--vars-advice-active))
+  (cl-assert (not blood-bind--advice-active))
   (let ((pmap (pcase partial
                    ((pred symbolp)
-                    (gethash partial (bbc-make-partial-map partial)))
+                    (gethash partial (blood-bind--compile-make-partial-map partial)))
                    ((pred keymapp)
                     partial)
                    ))
-        (keys (bbc-compile-pattern-to-string (blood-bind--entry-pattern entry)))
+        (keys (blood-bind--compile-compile-pattern-to-string (blood-bind--entry-pattern entry)))
         (target (blood-bind--entry-target entry))
         )
     (pcase (keymap-lookup pmap keys nil)
@@ -79,7 +103,7 @@ unless `strict', in which case error
     )
   )
 
-(defun bbc-compile-pattern-to-string (pattern) ;; -> string
+(defun blood-bind--compile-compile-pattern-to-string (pattern) ;; -> string
   "Convert a pattern to a key-valid-p string,
 also running any registered transforms
 "
@@ -94,13 +118,13 @@ also running any registered transforms
     )
   )
 
-(defun bbc-combine-partial-maps (&rest maps) ;; -> keymap
+(defun blood-bind--compile-combine-partial-maps (&rest maps) ;; -> keymap
   "Having converted entries to partial maps, combine those partial maps"
   (cl-assert (cl-every #'keymapp maps))
   (keymap-canonicalize (make-composed-keymap maps))
   )
 
-(defun bbc-get-collection-map-names (coll) ;; -> list[symbol]
+(defun blood-bind--compile-get-collection-map-names (coll) ;; -> list[symbol]
   "From a collection, get all map names,
 including those defined in:
 - let bindings,
@@ -122,12 +146,5 @@ including those defined in:
     )
   )
 
-
-(provide 'blood-bind--compile)
+(provide 'blood-bind--compiled)
 ;;; blood_bind_compile.el ends here
-;; Local Variables:
-;; read-symbol-shorthands: (
-;; ("bbc-" . "blood-bind--compile-")
-;; ("bbv-" . "blood-bind--vars-")
-;; )
-;; End:

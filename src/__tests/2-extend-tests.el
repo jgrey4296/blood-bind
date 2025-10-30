@@ -1,6 +1,5 @@
-;;; bb-hook-tests.el -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; 2-extend-tests.el -*- lexical-binding: t; no-byte-compile: t; -*-
 (require 'buttercup)
-(require 'blood-bind)
 
 (describe "sanity"
   ;; Specs:

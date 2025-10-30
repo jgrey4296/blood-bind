@@ -2,8 +2,8 @@
 
 (eval-when-compile
   (require 'cl-lib)
-  (require 'blood-bind--structs)
-  (require 'blood-bind--compile)
+  (require 'blood-bind--vars)
+  (require 'blood-bind-structs)
   )
 
 (cl-defmacro bloodbind! (name (&rest args)
@@ -75,7 +75,7 @@ Values:
          (namesym (gensym! 'bloodbind name)) ;; gen name to register under
          (entrysym (gensym "entries"))
          (clean-body (pop-plist-from-body! body))
-         (unlesscheck `(unless (or ,override (featurep ,blood-bind--vars-delay-symbol))))
+         (unlesscheck `(unless (or ,override (featurep ,blood-bind--delay-symbol))))
          )
     `(,@unlesscheck
        (let ((,entrysym (make-blood-bind-entries ,source ,clean-body)))
@@ -101,7 +101,7 @@ Values:
                       ;; else its part of the body
                       (x (push x body) nil)))
          (clean-body (pop-plist-from-body! body))
-         (unlesscheck `(unless (or ,override (featurep ,blood-bind--vars-delay-symbol))))
+         (unlesscheck `(unless (or ,override (featurep ,blood-bind--delay-symbol))))
          )
     `(,@unlesscheck
        (let ((,entrysym (make-blood-bind-transforms ,source ,clean-body)))
@@ -119,10 +119,3 @@ Values:
 
 (provide 'blood-bind--macros)
 ;;; blood_bind_macros.el ends here
-;; Local Variables:
-;; read-symbol-shorthands: (
-;; ("bbm-" . "blood-bind--macros-")
-;; ("bbs-" . "blood-bind--structs-")
-;; ("make-bb-" . "make-blood-bind-")
-;; )
-;; End:

@@ -1,6 +1,5 @@
-;;; bb-reporter-tests.el -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; 6-conflict-tests.el -*- lexical-binding: t; no-byte-compile: t; -*-
 (require 'buttercup)
-(require 'blood-bind)
 
 (describe "sanity"
   ;; Specs:

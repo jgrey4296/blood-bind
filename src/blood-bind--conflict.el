@@ -3,10 +3,9 @@
 (eval-when-compile
   (require 'cl-lib)
   (require 'blood-bind--vars)
-  (require 'blood-bind--structs)
   )
 
-(defun bbc-check-for-conflicts (coll) ;; -> list
+(defun blood-bind--check-for-conflicts (coll) ;; -> list
   "Check a collection of binding entries for conflicts"
   (cl-assert (blood-bind--collection-p coll))
 
@@ -14,9 +13,4 @@
   )
 
 (provide 'blood-bind--conflict)
-;; Local Variables:
-;; read-symbol-shorthands: (
-;; ("bbc-" . "blood-bind--conflict-")
-;; )
-;; End:
 ;;; blood-bind--conflict.el ends here
