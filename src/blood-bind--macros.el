@@ -2,6 +2,7 @@
 
 (eval-when-compile
   (require 'cl-lib)
+  (require 'macro-tools)
   (require 'blood-bind--vars)
   (require 'blood-bind-structs)
   )
@@ -77,11 +78,14 @@ Values:
          (clean-body (pop-plist-from-body! body))
          (unlesscheck `(unless (or ,override (featurep ,blood-bind--delay-symbol))))
          )
-    `(,@unlesscheck
-       (let ((,entrysym (make-blood-bind-entries ,source ,clean-body)))
-         (make-blood-bind-collection ,namesym ,docstring ,entrysym ,clean-body ,args ,type)
-         )
-       )
+    (if (equal clean-body '(nil))
+        nil
+      `(,@unlesscheck
+        (let ((,entrysym (make-blood-bind-entries ,source ,clean-body)))
+          (make-blood-bind-collection ,namesym ,docstring ,entrysym ,clean-body ,args ,type)
+          )
+        )
+      )
     )
   )
 

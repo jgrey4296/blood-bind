@@ -4,7 +4,11 @@
 (require 'blood-bind--buttercup)
 
 (buttercup-define-matcher :bb-parse-pattern (expr matcher &rest args)
-  "Utility to parse a blood bind pattern"
+  "Utility to parse a blood bind pattern
+
+Take the expression, parse it as a pattern,
+and return it for testing
+"
   (let* ((expr-result (funcall expr))
          (uneval-expr (buttercup--enclosed-expr expr))
          (val (blood-bind--parse-pattern expr-result))
@@ -16,7 +20,11 @@
   )
 
 (buttercup-define-matcher :bb-parse-meta (expr matcher &rest args)
-  "Utility to parse a blood bind pattern"
+  "Utility to parse a blood bind pattern
+
+Take the expression, parse it as a meta expression,
+and return it for testing
+"
   (let* ((expr-result (funcall expr))
          (uneval-expr (buttercup--enclosed-expr expr))
          (val (blood-bind--parse-meta expr-result))

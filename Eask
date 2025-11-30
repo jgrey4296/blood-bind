@@ -17,3 +17,7 @@
 
 (depends-on "emacs" "30.2")
 (depends-on "dash")
+(depends-on "macro-tools"
+            :repo "jgrey4296/macro-tools"
+            :fetcher 'github
+            )

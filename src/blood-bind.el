@@ -8,7 +8,7 @@
 ;; Version: 0.1.0
 ;; Keywords:
 ;; Homepage: https://github.com/jgrey4296/blood-bind
-;; Package-Requires: ((emacs "30.2") (dash))
+;; Package-Requires: ((emacs "30.2") (dash) (macro-tools))
 ;; Package written on: ((emacs 30.2))
 ;;
 ;; This file is not part of GNU Emacs.

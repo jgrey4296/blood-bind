@@ -10,7 +10,10 @@
 
 (describe "bloodbind general"
   (it "is a sanity test" (expect t :to-be (not nil)))
-  (xit "empty should expand to nothing")
+  (it "empty should error when given nothing"
+    (expect (macroexpand '(bloodbind! simple ()))
+            :to-equal nil)
+    )
   (xit "should have an optional docstring"
     (expect (macroexpand '(bloodbind! simple ()
                             [a] :: #'cmd))
