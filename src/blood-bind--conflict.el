@@ -1,4 +1,4 @@
-;;; blood-bind--conflict.el -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; blood-bind--conflict.el -*- lexical-binding: t; -*-
 
 (eval-when-compile
   (require 'cl-lib)

@@ -1,4 +1,4 @@
-;;; blood_bind_vars.el -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; blood_bind_vars.el -*- lexical-binding: t; -*-
 
 (defvar blood-bind--generated nil "where bindings are assembled into a keymaps")
 

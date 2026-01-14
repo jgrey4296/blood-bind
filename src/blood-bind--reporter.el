@@ -1,4 +1,4 @@
-;;; blood_bind_reporter.el -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; blood_bind_reporter.el -*- lexical-binding: t; -*-
 
 (defun blood-bind--reporter-conflict (&rest conflicts)
   " report on conflicting patterns for debugging "

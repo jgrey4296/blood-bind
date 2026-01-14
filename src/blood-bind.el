@@ -1,4 +1,4 @@
-;;; blood-bind.el --- A keybinding framework -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; blood-bind.el --- A keybinding framework -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2025 john
 ;;

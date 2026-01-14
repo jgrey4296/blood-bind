@@ -1,4 +1,4 @@
-;;; blood_bind_macros.el -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; blood_bind_macros.el -*- lexical-binding: t; -*-
 
 (eval-when-compile
   (require 'cl-lib)

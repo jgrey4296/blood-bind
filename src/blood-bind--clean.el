@@ -1,4 +1,4 @@
-;;; key-clean.el -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; key-clean.el -*- lexical-binding: t; -*-
 ;; Utilities to strip out annoying bindings from all keymaps such as:
 ;; C-{}, M-{}, C-M-{}, mouse, menu-bar, F1-F9...
 
