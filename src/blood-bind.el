@@ -29,9 +29,10 @@
 (require 'blood-bind--macros)
 (require 'blood-bind--hooks)
 (require 'blood-bind--reporter)
+(require 'blood-bind--compile)
 
-(defun blood-bind-apply (profile &optional merge)
-  " apply a profile of compiled keymaps to non-blood-bind variables"
+(defun blood-bind-apply (&rest profiles)
+  "apply profiles of compiled keymaps to non-blood-bind variables"
   (interactive)
   ;; retrieve keymaps from registry
   ;; set their respective variables
@@ -45,6 +46,7 @@ for entry in entries: bind target to correct profile map
 
 inserting compiled-profile structs into the store ready to apply
 
+if profiles is nill, compile all registered profiles
 "
   (interactive)
   )

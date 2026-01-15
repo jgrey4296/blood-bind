@@ -7,9 +7,29 @@
   (require 'blood-bind--vars)
   )
 
-(defvar blood-bind--profiles nil "patterns that create a collection of binding keymaps")
+(cl-defstruct (blood-bind--profile
+               (:constructor nil)
+               (:constructor make-blood-bind--profile)
+               )
+  "A named collection of collections."
+  (name        nil  :type 'symbol :read-only t)
+  (docstr      nil  :type 'string :read-only t)
+  (source      nil  :type 'string :read-only t)
+  (collections nil  :type 'list   :read-only t)
+  )
 
 ;;--------------------------------------------------
+
+(defun make-blood-bind-profile (name docstr source collections)
+  ""
+  )
+
+(defun blood-bind--profile-mapnames (profile) ;; profile -> list[symbol]
+
+
+  )
+
+
 
 
 (provide 'blood-bind--profile)

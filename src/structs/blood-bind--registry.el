@@ -9,7 +9,7 @@
 
 (defvar blood-bind--registry nil "where all bindings are stored, of type `blood-bind--store'")
 
-(defvar blood-bind--type-kwds           (list :profile ))
+(defvar blood-bind--type-kwds (list :profile ))
 
 (cl-defstruct (blood-bind--store
                (:constructor nil)
@@ -25,6 +25,19 @@
 
 ;;--------------------------------------------------
 
+(defun blood-bind-initialise-registry ()
+  (unless blood-bind--registry
+    (setq blood-bind--registry (make-blood-bind--store)))
+  )
+
+(defun blood-bind--register-collection (collection)
+  (blood-bind-initialise-registry)
+  ;; TODO merge collections if it already exists
+  (puthash name
+           collection
+           (cl-struct-slot-value 'blood-bind--store 'collections blood-bind--registry)
+           )
+  )
 
 (provide 'blood-bind--registry)
 ;;; blood-bind--registry.el ends here
