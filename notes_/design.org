@@ -46,35 +46,170 @@ Which is inserted into compiled-profile structs.
 
 Which inserts the compiled maps into emulation-mode-map-alists
 
-* Keymap hierarchy
-https://www.gnu.org/software/emacs/manual/html_node/elisp/Controlling-Active-Maps.html
-https://www.gnu.org/software/emacs/manual/html_node/elisp/Searching-Keymaps.html
+* [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Controlling-Active-Maps.html][Keymap hierarchy]]
 https://github.com/noctuid/evil-guide
 NOTE: See evil-core.el for full design of evil keybindings
 
 From highest to lowest priority:
 
-1) Overriding keymaps/overlay keymaps
+0) overriding-terminal-local-map
+1) overriding-local-map
 2) Emulation mode keymaps
 3) Evil keymaps
-4) Intercept keymaps
-5) Local state keymap
-6) Minor-mode keymaps
-7) Auxiliary keymaps
-8) Overriding keymaps
-9) Global state keymap
-10) Keymaps for other states
+4) evil Intercept keymaps
+5) evil Local state keymap
+6) evil Minor-mode keymaps
+7) evil Auxiliary keymaps
+8) evil Overriding keymaps
+9) evil Global state keymap
+10) evil Keymaps for other states
 11) Minor mode keymaps
 12) Local keymap (`local-set-key')
 13) Global keymap (`global-set-key')
 
-    
-* Entries
-** Patterns
-** Let bindings
-** Operators
-* Profiles
+The pseudo-code for [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Searching-Keymaps.html][Searching Keymaps]]:
+#+begin_src lisp :results output
+;; https://www.gnu.org/software/emacs/manual/html_node/elisp/Searching-Keymaps.html
+(or (if overriding-terminal-local-map
+        (find-in overriding-terminal-local-map))
+    (if overriding-local-map
+        (find-in overriding-local-map)
+        (or (find-in (get-char-property (point) 'keymap))
+            (find-in-any emulation-mode-map-alists)
+            (find-in-any minor-mode-overriding-map-alist)
+            (find-in-any minor-mode-map-alist)
+            (if (get-char-property (point) 'local-map)
+                (find-in (get-char-property (point) 'local-map))
+                (find-in (current-local-map)))))
+    (find-in (current-global-map)))
+#+end_src
+
+* [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Format-of-Keymaps.html][Keymap format]]
+
+- (keymap elements)
+- (keymap elements . parent)
+
+Where elements are of:
+
+- (event . binding)
+- (event name . binding)
+- (event name help . binding)
+- (event menu . details)
+- (t . binding)
+- char-table
+- vector
+- string
+- (keymap ...)
+
+[[https://www.gnu.org/software/emacs/manual/html_node/elisp/Classifying-Events.html][event types]]
+
+[[https://www.gnu.org/software/emacs/manual/html_node/elisp/Key-Lookup.html][Binding types]]:
+
+- nil
+- command
+- keyboard macro (as an array)
+- keymap
+- lambda (as a list)
+- symbol (until its function definition is a binding type)
+
+* Blood Bind Components
+
+** Entries
+An Entry is a `blood-bind--entry` struct,
+that holds a symbolic representation of a future binding.
+
+Primarily, it binds a *pattern* using an *operator* onto a *target*.
+
+On compilation, entries are converted into single elements of a keymap.
+
+*** Pattern
+*** Operator
+*** Target
+*** Metadata
+** TODO Transforms
+Transforms include:
+- pattern based modification of bindings. eg: [a b c] -> [a b d]
+- remapping entry targets. eg: #'blah -> #'bloo.
+- remapping map parents. eg: python-mode-map -> elixir-mode-map
+  
+** Collections
+A Collection is a `blood-bind--collection` struct.
+It is a container for a logically related group of entries.
+
+It contains metadata (a name, docstr, its source),
+along with the entries,
+and records variables that need binding to complete entry patterns.
+
+Crucially, it contains a *type* and *target*.
+The target defines where the compiled keymap will be used, mainly:
+- :hook. The keymap is locally activated as a hook.
+- :var.  A variable has the keymap set as its value.
+- :layer. The keymap is togglable as a layer.
+
+On compilation, collections are converted into a single keymap.
+
+Prior to compilation, there is nothing stopping a collection to have conflicting
+keybindings. These are addressed during validity checking as a part of the
+compilation process.
+
+** TODO States and Layers.
+Layer : a non-exclusive keymap that can be toggled on and off.
+State : an exclusive keymap. Only one can be active at a time.
+** Profiles
+A Profile is a `blood-bind--profile` struct,
+which combines multiple disparate collections into one container.
+
+On Compilation, profiles are converted into a set of keymaps.
+
+** The Registry
+The registry (there is only one), is a `blood-bind--store` struct.
+
+It holds all defined:
+- profiles,
+- collections,
+- transforms,
+- compiled keymaps,
+- partial keymaps.
+
 ** Compilation
-* The Registry
-* Application to keymaps
+Compilation is the process of converting:
+- profile    -> set[keymap].
+- collection -> keymap.
+- entry      -> keymap element.
+
+The process is as follows:
+1) compile each profile p by:
+2) compiling each Collection p.c[n]:
+3) Create a matched keymap c.k[n].
+4) Convert each entry c.e into a valid binding c.b.
+5) Check the validity of c.b wrt c.k.
+6) If invalid, error. If Valid, insert c.b into c.k.
+7) After all collections are compiled,
+   parent p.k[n] -> p.k[n'] for p.c[n].parent
+8) Check all p.k[n] are used as a parent, in a hook,
+   assigned a var, or a layer. else complain.
+
+** Application
+Upon application of a profile,
+- internal compiled keymaps are applied onto their global target variables.
+- hook keymaps are applied into their respective hooks.
+- state / layer keymaps are inserted into the global state/layer machinery of blood-bind.
+
+** Reporting
+
+** Visualising
+
+display a map in the format of the keyboard:
+
+row: 1-=      DEL
+<blank>
+row: q-]      RET
+<blank>
+row: a-\      
+<blank>
+row: `-/
+<blank>
+
+Pop it up, press a key to expand the name below it...
+
 * Links
