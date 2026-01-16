@@ -12,7 +12,7 @@
 
 (defun blood-bind-make-insert-map () ;; -> keymap
   "create a keymap where every binding is #'self-insert-command"
-  (make-keymap)
+  (make-keymap "bloo")
   )
 
 (defun blood-bind-ensure-emulation-alist (&optional onlyp)

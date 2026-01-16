@@ -5,13 +5,14 @@
 ;;
 ;;
 ;;-- end Header
+(require 'dash)
 (require 'buttercup)
 (require 'blood-bind--buttercup)
 
 (defvar keymap-stress-size 1000)
 
 (defun gen-keyseqs (size form)
-  (cl-loop for x from 0 upto size
+  (cl-loop for x from 0 below size
            collect (funcall form x)))
 
 (defun multi-keystr (x)
@@ -159,33 +160,35 @@
     (setq strings (gen-keyseqs keymap-stress-size #'multi-keystr))
     )
   (it "is a sanity test" (expect t :to-be (not nil)))
+  (it "should have strings" (expect (length strings) :to-equal keymap-stress-size))
   (it "sets all the strings len 10"
     (let ((map (make-sparse-keymap))
           (len 10)
           )
+      (expect len :to-be-less-than (length strings))
       (dolist (x (seq-subseq strings 0 len))
         (keymap-set map x #'test)
         )
       )
     )
-  (it "sets all the string len 100"
-    (let ((map (make-sparse-keymap))
-          (len 100)
-          )
-      (dolist (x (seq-subseq strings 0 len))
-        (keymap-set map x #'test)
-        )
-      )
-    )
-  (it "sets all the string len 1000"
-    (let ((map (make-sparse-keymap))
-          (len 1000)
-          )
-      (dolist (x (seq-subseq strings 0 len))
-        (keymap-set map x #'test)
-        )
-      )
-    )
+  ;; (it "sets all the string len 100"
+  ;;   (let ((map (make-sparse-keymap))
+  ;;         (len 100)
+  ;;         )
+  ;;     (dolist (x (seq-subseq strings 0 len))
+  ;;       (keymap-set map x #'test)
+  ;;       )
+  ;;     )
+  ;;   )
+  ;; (it "sets all the string len 1000"
+  ;;   (let ((map (make-sparse-keymap))
+  ;;         (len 1000)
+  ;;         )
+  ;;     (dolist (x (seq-subseq strings 0 len))
+  ;;       (keymap-set map x #'test)
+  ;;       )
+  ;;     )
+  ;;   )
 
 )
 

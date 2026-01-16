@@ -7,7 +7,7 @@
 (website-url "https://github.com/jgrey4296/blood-bind")
 (keywords )
 
-(package-file "src/blood-bind.el")
+(package-file "blood-bind.el")
 (files "src/blood-bind--*.el" "src/structs/*.el")
 
 (script "test" "echo \"Error: no test specified\" && exit 1")
