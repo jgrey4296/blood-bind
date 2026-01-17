@@ -1,12 +1,12 @@
 ;;; init.el -*- lexical-binding: t; no-byte-compile: t; -*-
 
 
-(message "Teset init file")
-(eask-start)
+(message "Test init file")
 (require 'evil)
-(evil-mode)
+(evil-mode 1)
 
 (require 'blood-bind)
+(message "Blood Bind Loaded")
 
 
 ;;; init.el ends here
