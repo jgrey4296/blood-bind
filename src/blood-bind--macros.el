@@ -1,4 +1,4 @@
-;;; blood_bind_macros.el -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; blood_bind_macros.el -*- lexical-binding: t; -*-
 
 (eval-when-compile
   (require 'cl-lib)
@@ -18,8 +18,11 @@ using the bloodbind DSL.
 Doesn't check for conflicts, or do expansions.
 
 DSL:
-{pattern} {op} {target} {meta}?
+{keys}
 :let ({$var} = {val} ... )
+{pattern} {op} {target} {meta}?
+
+Keys:
 
 Pattern:
 [ {meta} :|: {key seq} ]
@@ -75,14 +78,22 @@ Values:
                       (x (push x body) nil)))
          (namesym (gensym! 'bloodbind name)) ;; gen name to register under
          (entrysym (gensym "entries"))
+         (collsym (gensym "collection"))
          (clean-body (pop-plist-from-body! body))
-         (unlesscheck `(unless (or ,override (featurep ,blood-bind--delay-symbol))))
+         (unlesscheck `(unless (or ,override (featurep (quote ,blood-bind--delay-symbol)))))
          )
     (if (equal clean-body '(nil))
         nil
       `(,@unlesscheck
-        (let ((,entrysym (make-blood-bind-entries ,source ,clean-body)))
-          (make-blood-bind-collection ,namesym ,docstring ,entrysym ,clean-body ,args ,type)
+        (let* ((,entrysym (make-blood-bind-entries ,source ,clean-body))
+               (,collsym  (make-blood-bind-collection ,namesym
+                                                      ,docstring
+                                                      ,entrysym
+                                                      ,clean-body
+                                                      ,args
+                                                      ,type))
+               )
+          (blood-bind--register-collection ,collsym)
           )
         )
       )
@@ -105,19 +116,23 @@ Values:
                       ;; else its part of the body
                       (x (push x body) nil)))
          (clean-body (pop-plist-from-body! body))
-         (unlesscheck `(unless (or ,override (featurep ,blood-bind--delay-symbol))))
+         (entrysym (gensym "entries"))
+         (collsym (gensym "collection"))
+         (unlesscheck `(unless (or ,override (featurep (quote ,blood-bind--delay-symbol)))))
          )
     `(,@unlesscheck
-       (let ((,entrysym (make-blood-bind-transforms ,source ,clean-body)))
-         (make-blood-bind-collection ,name
-                                     ,docstr
-                                     ,source
-                                     ,entrysym
-                                     nil
-                                     'transforms
-                                     )
-         )
-       )
+      (let* ((,entrysym (make-blood-bind-transforms ,source ,clean-body))
+             (,collsym  (make-blood-bind-collection ,name
+                                                    ,docstr
+                                                    ,source
+                                                    ,entrysym
+                                                    nil
+                                                    'transforms
+                                                    ))
+             )
+        (blood-bind--register-collection ,collsym)
+        )
+      )
     )
   )
 

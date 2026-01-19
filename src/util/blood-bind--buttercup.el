@@ -1,5 +1,5 @@
-;;; extra-buttercup-matchers.el -*- lexical-binding: t; no-byte-compile: t; -*-
-
+;;; extra-buttercup-matchers.el -*- lexical-binding: t; -*-
+;; Utility matches for buttercup, to simplify testing
 (require 'buttercup)
 
 

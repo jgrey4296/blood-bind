@@ -1,4 +1,4 @@
-;;; blood_bind_hooks.el -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; blood_bind_hooks.el -*- lexical-binding: t; -*-
 
 (defvar blood-bind-pre-compile-hook nil "A Hook run before starting to compile keymaps")
 

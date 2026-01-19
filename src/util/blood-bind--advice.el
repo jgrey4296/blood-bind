@@ -1,4 +1,4 @@
-;;; blood-bind--advice.el -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; blood-bind--advice.el -*- lexical-binding: t; -*-
 
 (defvar blood-bind--advice-active nil "A toggle to indicate non-blood-bind keybinding has been disabled")
 

@@ -1,4 +1,4 @@
-;;; blood-bind.el --- A keybinding framework -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; blood-bind.el --- A keybinding framework -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2025 john
 ;;
@@ -8,7 +8,6 @@
 ;; Version: 0.1.0
 ;; Keywords:
 ;; Homepage: https://github.com/jgrey4296/blood-bind
-;; Package-Requires: ((emacs "30.2") (dash) (macro-tools))
 ;; Package written on: ((emacs 30.2))
 ;;
 ;; This file is not part of GNU Emacs.
@@ -29,9 +28,10 @@
 (require 'blood-bind--macros)
 (require 'blood-bind--hooks)
 (require 'blood-bind--reporter)
+(require 'blood-bind--compile)
 
-(defun blood-bind-apply (profile &optional merge)
-  " apply a profile of compiled keymaps to non-blood-bind variables"
+(defun blood-bind-apply (&rest profiles)
+  "apply profiles of compiled keymaps to non-blood-bind variables"
   (interactive)
   ;; retrieve keymaps from registry
   ;; set their respective variables
@@ -45,6 +45,7 @@ for entry in entries: bind target to correct profile map
 
 inserting compiled-profile structs into the store ready to apply
 
+if profiles is nill, compile all registered profiles
 "
   (interactive)
   )
