@@ -1,8 +1,7 @@
 #+TITLE: Keybinding Questions
 
-* What is the structure of keymaps?
 
-* What can you to to keymaps to add custom structure?
+* What can you to to keymaps to add custom structure and keep it a keymap?
 
 * When do you want to use `define-prefix-command`?
 

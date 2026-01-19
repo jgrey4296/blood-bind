@@ -1,19 +1,20 @@
 ;; -*- mode: eask; lexical-binding: t -*-
 
 
-(defconst version "0.1.0")
 (package "blood-bind"
-         version
+         "0.1.0"
          "A keybinding framework")
 
 (website-url "https://github.com/jgrey4296/blood-bind")
 (keywords "bindings")
 
 (package-descriptor "blood-bind-pkg.el")
-(files "./src/blood-bind.el" "./src/blood-bind--*.el" "./src/structs/*.el")
-(load-paths "./src/" "./src/structs")
-
-(script "test" "echo \"Error: no test specified\" && exit 1")
+(files
+ "./src/blood-bind.el"
+ "./src/blood-bind--*.el"
+ "./src/[a-z]*/*.el"
+ )
+(load-paths "./src/" "./src/[a-z]*/")
 
 (source "gnu")
 (source "melpa")
